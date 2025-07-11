@@ -1,0 +1,17 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix agr: <http://webizen.org/v1/agreements#> .
+@prefix sec: <http://webizen.org/v1/security#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+agr:AgreementShape
+    a sh:NodeShape ;
+    sh:targetClass agr:Agreement ;
+    sh:property [
+        sh:path agr:hasSignatory ;
+        sh:minCount 2 ;
+    ] ;
+    sh:property [
+        sh:path agr:hasSignature ;
+        sh:node sec:Signature ;
+        sh:minCount 2 ;
+    ] .

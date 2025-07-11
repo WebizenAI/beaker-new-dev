@@ -1,0 +1,12 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix cash: <http://webizen.org/v1/cashtab#> .
+
+cash:Wallet a rdfs:Class ;
+    rdfs:label "eCash Wallet" .
+
+cash:hasAddress a rdf:Property ;
+    rdfs:label "Has eCash Address" .
+
+cash:hasToken a rdf:Property ;
+    rdfs:label "Has SLP Token" .

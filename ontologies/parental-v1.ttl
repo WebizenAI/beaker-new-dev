@@ -1,0 +1,12 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix parental: <http://webizen.org/v1/parental#> .
+
+parental:Guardian a rdfs:Class ;
+    rdfs:label "Guardian" .
+
+parental:Ward a rdfs:Class ;
+    rdfs:label "Ward" .
+
+parental:hasRule a rdf:Property ;
+    rdfs:label "Has Rule" .

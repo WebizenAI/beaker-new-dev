@@ -1,0 +1,17 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix smm: <http://webizen.org/v1/sparql-mm#> .
+@prefix time: <http://www.w3.org/2006/time#> .
+
+smm:MediaObject a rdfs:Class ;
+    rdfs:label "Media Object" .
+
+smm:hasFragment a rdf:Property ;
+    rdfs:label "Has Fragment" .
+
+smm:Fragment a rdfs:Class ;
+    rdfs:label "Media Fragment" ;
+    rdfs:subClassOf time:TemporalEntity .
+
+smm:hasTranscription a rdf:Property ;
+    rdfs:label "Has Transcription" .

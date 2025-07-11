@@ -1,0 +1,15 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sec: <http://webizen.org/v1/security#> .
+
+sec:Key a rdfs:Class ;
+    rdfs:label "Cryptographic Key" .
+
+sec:Signature a rdfs:Class ;
+    rdfs:label "Digital Signature" .
+
+sec:keyType a rdf:Property ;
+    rdfs:label "Key Type" .
+
+sec:signatureAlgorithm a rdf:Property ;
+    rdfs:label "Signature Algorithm" .

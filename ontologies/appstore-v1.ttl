@@ -1,0 +1,12 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix as: <http://webizen.org/v1/appstore#> .
+
+as:Application a rdfs:Class ;
+    rdfs:label "Application" .
+
+as:hasCryptoSupport a rdf:Property ;
+    rdfs:label "Has Crypto Support" .
+
+as:hasCategory a rdf:Property ;
+    rdfs:label "Has Category" .

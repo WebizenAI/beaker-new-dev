@@ -1,0 +1,12 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix res: <http://webizen.org/v1/resources#> .
+
+res:Resource a rdfs:Class ;
+    rdfs:label "Resource" .
+
+res:hasURI a rdf:Property ;
+    rdfs:label "Has URI" .
+
+res:hasFormat a rdf:Property ;
+    rdfs:label "Has Format" .

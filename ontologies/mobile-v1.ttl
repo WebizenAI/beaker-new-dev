@@ -1,0 +1,15 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix mob: <http://webizen.org/v1/mobile#> .
+
+mob:MobileDevice a rdfs:Class ;
+    rdfs:label "Mobile Device" .
+
+mob:ChatSession a rdfs:Class ;
+    rdfs:label "Chat Session" .
+
+mob:CallRecord a rdfs:Class ;
+    rdfs:label "Call Record" .
+
+mob:hasContact a rdf:Property ;
+    rdfs:label "Has Contact" .

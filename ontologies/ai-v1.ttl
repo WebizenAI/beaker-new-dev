@@ -1,0 +1,18 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ai: <http://webizen.org/v1/ai#> .
+
+ai:AIModel a rdfs:Class ;
+    rdfs:label "AI Model" .
+
+ai:hasModelName a rdf:Property ;
+    rdfs:label "Has Model Name" .
+
+ai:hasProvider a rdf:Property ;
+    rdfs:label "Has Provider" .
+
+ai:RAGContext a rdfs:Class ;
+    rdfs:label "RAG Context" .
+
+ai:hasVectorEmbedding a rdf:Property ;
+    rdfs:label "Has Vector Embedding" .

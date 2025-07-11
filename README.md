@@ -1,112 +1,130 @@
-Beaker Browser
-======
+# Webizen v0.25
 
-# [This project is now archived.](./archive-notice.md)
+Webizen is a humanitarian ICT proof-of-concept: a decentralized social-web browser refactored from Beaker Browser. It is delivered as a WebExtension, an Electron desktop app, and a React Native mobile app.
 
-Beaker was an experimental peer-to-peer Web browser. It adds new APIs for building hostless applications while remaining compatible with the rest of the Web. [Visit the website.](https://beakerbrowser.com/)
+This project aims to provide privacy-preserving, accessible, and decentralized social-web tools for social good.
 
 ## Table of Contents
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
-
-- [Installing](#installing)
-  - [Binaries](#binaries)
-  - [Building from source](#building-from-source)
-- [Documentation](#documentation)
-  - [Env Vars](#env-vars)
-- [Vulnerability disclosure](#vulnerability-disclosure)
-- [Known issues](#known-issues)
-  - [tmux](#tmux)
-- [Contributors](#contributors)
-  - [Backers](#backers)
-  - [Sponsors](#sponsors)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [Running the Application](#running-the-application)
+  - [Electron (Desktop)](#electron-desktop)
+  - [WebExtension (Chrome/Firefox)](#webextension-chromefirefox)
+  - [React Native (Mobile)](#react-native-mobile)
+- [Running Tests](#running-tests)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
 - [License](#license)
 
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+## Project Structure
 
-## Installing
+This repository uses a monorepo-like structure with two `package.json` files, which is inherited from the original Beaker Browser architecture:
 
-### Binaries
+-   **`scripts/package.json`**: Contains development dependencies (`devDependencies`) and scripts for building, running, and testing the application. All development commands should be run from the `scripts/` directory.
+-   **`app/package.json`**: Contains application dependencies (`dependencies`) that will be packaged with the final builds (Electron, React Native).
 
-**Visit the [Releases Page](https://github.com/beakerbrowser/beaker/releases) to find the installer you need.**
+This separation is necessary because native Node.js modules need to be compiled against different runtimes: `devDependencies` against your local Node.js version, and `dependencies` against the Electron runtime.
 
-### Building from source
+## Getting Started
 
-Requires node 12 or higher.
+### Prerequisites
 
-In Linux (and in some cases macOS) you need libtool, m4, autoconf, and automake:
+-   **Node.js**: v20.0.0 or higher.
+-   **npm**: v10.0.0 or higher.
+-   **Build Tools**: You will need a C++ compiler toolchain to build native dependencies.
+    -   **Windows**: Install "Desktop development with C++" from the Visual Studio Installer. See node-gyp installation instructions.
+    -   **macOS**: Install Xcode Command Line Tools (`xcode-select --install`).
+    -   **Linux**: Install `build-essential` and `python3` (`sudo apt-get install build-essential python3`).
+-   **React Native**: Follow the official "Environment Setup" guide for React Native CLI to configure Android Studio and/or Xcode.
+
+### Installation
+
+1.  Clone the repository:
+    ```bash
+    git clone https://github.com/mediaprophet/socialweb.git
+    cd socialweb
+    ```
+
+2.  Install dependencies from the `scripts` directory. This will also install the `app` dependencies.
+    ```bash
+    cd scripts
+    npm install
+    ```
+
+3.  Rebuild native modules for Electron. This step is crucial after any installation or update of dependencies.
+    ```bash
+    npm run rebuild
+    ```
+
+## Running the Application
+
+All commands should be run from the `scripts/` directory.
+
+### Electron (Desktop)
+
+To run the desktop application in development mode:
 
 ```bash
-sudo apt-get install libtool m4 make g++ autoconf # debian/ubuntu
-sudo dnf install libtool m4 make gcc-c++ libXScrnSaver  # fedora
-brew install libtool autoconf automake # macos
-```
-
-In Windows, you'll need to install [Python 2.7](https://www.python.org/downloads/release/python-2711/), Visual Studio 2015 or 2017, and [Git](https://git-scm.com/download/win). (You might try [windows-build-tools](https://www.npmjs.com/package/windows-build-tools).) Then run:
-
-```powershell
-npm config set python c:/python27
-npm config set msvs_version 2017
-npm install -g node-gyp
-npm install -g gulp
-```
-
-To build:
-
-```bash
-git clone https://github.com/beakerbrowser/beaker.git
-cd beaker/scripts
-npm install # don't worry about v8 api errors building native modules - rebuild will fix
-npm run rebuild # needed after each install. see https://github.com/electron/electron/issues/5851
 npm start
 ```
 
-If you pull latest from the repo and get weird module errors, do:
+### WebExtension (Chrome/Firefox)
+
+To build the WebExtension for loading into a browser:
 
 ```bash
-npm run burnthemall
+npm run build:webext
+```
+*(Note: This script will be fully implemented in a later task. It will create a `dist/webext` directory.)*
+
+Once built, load the extension into your browser:
+1.  Navigate to `chrome://extensions` or `about:debugging`.
+2.  Enable "Developer mode".
+3.  Click "Load unpacked" and select the `dist/webext` directory.
+
+### React Native (Mobile)
+
+Ensure you have an emulator running or a device connected.
+
+```bash
+# For Android
+npx react-native run-android
+
+# For iOS
+npx react-native run-ios
 ```
 
-This invokes [the mad king](http://nerdist.com/wp-content/uploads/2016/05/the-mad-king-game-of-thrones.jpg), who will torch your `node_modules/`, and do the full install/rebuild process for you.
-(We chose that command name when GoT was still cool.)
-`npm start` should work afterward.
+## Running Tests
 
-If you're doing development, `npm run watch` to have assets build automatically.
+The project uses Jest for unit and integration testing.
 
-## [Documentation](https://docs.beakerbrowser.com)
+```bash
+npm test
+```
 
-### Env Vars
+To see code coverage, run:
+```bash
+npm test -- --coverage
+```
 
-- `DEBUG`: which log systems to output? A comma-separated string. Can be `beaker`, `dat`, `bittorrent-dht`, `dns-discovery`, `hypercore-protocol`. Specify `*` for all.
-- `BEAKER_OPEN_URL`: open the given URL on load, rather than the previous session or default tab.
-- `BEAKER_USER_DATA_PATH`: override the user-data path, therefore changing where data is read/written. Useful for testing. For default value see `userData` in the [electron docs](https://electron.atom.io/docs/api/app/#appgetpathname).
-- `BEAKER_DAT_QUOTA_DEFAULT_BYTES_ALLOWED`: override the default max-quota for bytes allowed to be written by a dat site. Useful for testing. Default value is `'500mb'`. This can be a Number or a String. Check [bytes.parse](https://github.com/visionmedia/bytes.js/tree/a4b9af2bf289175f12b3538eb172f2489844b1ec#bytesparsestringnumber-value-numbernull) for supported units and abbreviations.
+## Troubleshooting
 
-## Vulnerability disclosure
+-   **Native Module Errors on `npm install`**: Errors related to `node-gyp` usually mean your build toolchain is not set up correctly. Please refer to the Prerequisites section.
 
-See [SECURITY.md](./SECURITY.md) for reporting security issues and vulnerabilities.
+-   **Electron Fails to Start with Module Errors**: If you see an error like `Module version mismatch`, it means the native dependencies were not compiled correctly for Electron's Node.js runtime. Run `npm run rebuild` from the `scripts/` directory to fix this.
 
-## Known issues
+-   **"Burnthemall" for a Clean Slate**: If you encounter persistent or strange module errors after pulling updates, you can use the `burnthemall` script. This will completely remove all `node_modules` directories and perform a clean installation and rebuild.
+    ```bash
+    npm run burnthemall
+    ```
 
-### tmux
+## Contributing
 
-Launching from tmux is known to cause issues with GUI apps in macOS. On Beaker, it may cause the application to hang during startup.
-
-## Contributors
-
-This project exists thanks to all the people who contribute. [[Contribute]](CONTRIBUTING.md).
-[![](https://opencollective.com/beaker/contributors.svg?width=890)](https://github.com/beakerbrowser/beaker/graphs/contributors)
+Contributions are welcome! Please see CONTRIBUTING.md for details on how to get started.
 
 ## License
 
-MIT License (MIT)
-
-Copyright (c) 2018 Blue Link Labs
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+This project is licensed under the MIT License - see the LICENSE file for details.

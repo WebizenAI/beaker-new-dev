@@ -1,0 +1,11 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix tl: <http://webizen.org/v1/timeline#> .
+@prefix time: <http://www.w3.org/2006/time#> .
+
+tl:Timeline a rdfs:Class ;
+    rdfs:label "Timeline" .
+
+tl:hasEvent a rdf:Property ;
+    rdfs:label "Has Event" ;
+    rdfs:range time:Instant .

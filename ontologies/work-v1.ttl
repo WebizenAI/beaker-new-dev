@@ -1,0 +1,24 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix work: <http://webizen.org/v1/work#> .
+
+work:Project a rdfs:Class ;
+    rdfs:label "Project" .
+
+work:Task a rdfs:Class ;
+    rdfs:label "Task" .
+
+work:Contributor a rdfs:Class ;
+    rdfs:label "Contributor" .
+
+work:hasTask a rdf:Property ;
+    rdfs:label "Has Task" .
+
+work:hasContributor a rdf:Property ;
+    rdfs:label "Has Contributor" .
+
+work:hasRole a rdf:Property ;
+    rdfs:label "Has Role" .
+
+work:hasObligationCost a rdf:Property ;
+    rdfs:label "Has Obligation Cost" .

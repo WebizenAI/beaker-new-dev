@@ -1,0 +1,80 @@
+{
+  "version": "0.25.0",
+  "compensation": {
+    "paymentRequired": true,
+    "paymentAmountXEC": 100,
+    "balanceThresholdXEC": 200000,
+    "obligationCosts": {
+      "licenses": {
+        "chatterbox": {
+          "type": "per-seat",
+          "cost": 0,
+          "currency": "XEC"
+        },
+        "google_tts": {
+          "type": "per-character",
+          "cost": 4e-06,
+          "currency": "USD"
+        }
+      },
+      "services": {
+        "grok_api": {
+          "type": "per-call",
+          "cost": 0.01,
+          "currency": "USD"
+        }
+      },
+      "compute": {
+        "ollama_gpu": {
+          "type": "per-token",
+          "cost": 1e-06,
+          "currency": "XEC"
+        }
+      }
+    }
+  },
+  "features": {
+    "adp": true,
+    "workManagement": true,
+    "hypermedia": true,
+    "mobile": true,
+    "email": true,
+    "solidPod": true,
+    "parentalControls": true,
+    "appStore": true
+  },
+  "ai": {
+    "providers": {
+      "ollama": {
+        "enabled": true,
+        "model": "llama3"
+      },
+      "openai": {
+        "enabled": false,
+        "apiKey": "YOUR_API_KEY",
+        "model": "gpt-4"
+      },
+      "grok": {
+        "enabled": false,
+        "apiKey": "YOUR_API_KEY",
+        "model": "grok-1"
+      },
+      "gemini": {
+        "enabled": false,
+        "apiKey": "YOUR_API_KEY",
+        "model": "gemini-pro"
+      }
+    },
+    "tts": {
+      "defaultProvider": "chatterbox",
+      "providers": {
+        "chatterbox": {
+          "enabled": true
+        },
+        "webSpeech": {
+          "enabled": true
+        }
+      }
+    }
+  }
+}

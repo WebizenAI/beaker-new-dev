@@ -1,0 +1,12 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix cml: <http://webizen.org/v1/cml#> .
+
+cml:Annotation a rdfs:Class ;
+    rdfs:label "Context Markup Language Annotation" .
+
+cml:hasTarget a rdf:Property ;
+    rdfs:label "Has Target" .
+
+cml:hasBody a rdf:Property ;
+    rdfs:label "Has Body" .

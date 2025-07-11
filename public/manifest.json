@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "Webizen",
+  "version": "0.25.0",
+  "description": "A decentralized social-web browser.",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "tabs",
+    "history",
+    "webRequest",
+    "declarativeNetRequest",
+    "sidePanel"
+  ],
+  "host_permissions": [
+    "https://*/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Webizen",
+    "default_popup": "popup.html"
+  },
+  "side_panel": {
+    "default_path": "sidebar.html"
+  }
+}

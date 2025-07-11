@@ -1,0 +1,19 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix work: <http://webizen.org/v1/work#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+work:ProjectShape
+    a sh:NodeShape ;
+    sh:targetClass work:Project ;
+    sh:property [
+        sh:path work:hasTask ;
+        sh:node work:TaskShape ;
+    ] .
+
+work:TaskShape
+    a sh:NodeShape ;
+    sh:targetClass work:Task ;
+    sh:property [
+        sh:path work:hasContributor ;
+        sh:minCount 1 ;
+    ] .
