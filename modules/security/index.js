@@ -113,7 +113,33 @@ async function storeRotatedKeys(keys, solidPodUrl) {
     });
     await solidClient.saveSolidDatasetAt(solidPodUrl, solidDataset);
 
-    console.log('Rotated keys stored successfully in Quadstore and SolidOS pods.');
+    // Backup keys to IPFS
+    const { storeBackup } = require('../../services/ipfs');
+    const keysJson = JSON.stringify(keys);
+    const cid = await storeBackup(keysJson);
+
+    // Sign the backup with SPHINCS+
+    const signature = sphincsPlusSign(cid, 'privateKey'); // Replace 'privateKey' with actual key management
+
+    // Store the IPFS CID and signature in Quadstore and SolidOS pod
+    const backupMeta = {
+      cid,
+      signature,
+      timestamp: new Date().toISOString(),
+    };
+    await quadstore.insert({
+      graph: 'rotated-keys-backup',
+      data: backupMeta,
+    });
+
+    const backupThing = solidClient.createThing({ name: `backup-${Date.now()}` });
+    solidClient.addStringNoLocale(backupThing, 'http://schema.org/cid', cid);
+    solidClient.addStringNoLocale(backupThing, 'http://schema.org/signature', signature);
+    solidClient.addStringNoLocale(backupThing, 'http://schema.org/timestamp', backupMeta.timestamp);
+    solidClient.addThing(solidDataset, backupThing);
+    await solidClient.saveSolidDatasetAt(solidPodUrl, solidDataset);
+
+    console.log('Rotated keys stored successfully in Quadstore, SolidOS pods, and backed up to IPFS.');
   } catch (error) {
     console.error('Error storing rotated keys:', error);
   }

@@ -1,9 +1,13 @@
+const fs = require('fs');
+const path = require('path');
+const supportedLanguages = ['en', 'it', 'nl', 'de', 'es', 'fr', 'zh', 'hi', 'ja', 'ko', 'bn', 'ta', 'te', 'pt', 'qu', 'ar'];
 /**
  * Test Suite Module
  *
  * This module runs a series of tests against core Webizen components
  * to verify their functionality and performance.
  */
+
 
 // In a real environment, these would be properly required.
 // For this skeleton, we'll assume they are available.
@@ -547,6 +551,8 @@ class TestSuite {
     for (const test of this.tests) {
       results.push(await test());
     }
+    // Export reports after running all tests
+    this.exportReports(results);
     return results;
   }
 

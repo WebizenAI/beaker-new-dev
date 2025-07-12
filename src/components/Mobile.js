@@ -74,15 +74,19 @@ const Mobile = () => {
     });
   };
 
-  const notifyCallVerificationFailure = (callerId) => {
-    const message = i18next.t('callVerificationFailure', {
-      callerId,
-    });
+  /**
+   * Show a multi-lingual notification for call verification failure.
+   * @param {string} callerId - The caller's identifier.
+   * @param {object} [options] - Optional notification style overrides.
+   */
+  const notifyCallVerificationFailure = (callerId, options = {}) => {
+    const message = i18next.t('callVerificationFailure', { callerId });
     Toast.show({
-      type: 'error',
-      text1: i18next.t('notificationTitle'),
-      text2: message,
-      position: 'bottom',
+      type: options.type || 'error',
+      text1: options.text1 || i18next.t('notificationTitle'),
+      text2: options.text2 || message,
+      position: options.position || 'bottom',
+      ...options
     });
   };
 

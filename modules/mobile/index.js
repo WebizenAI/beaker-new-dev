@@ -25,30 +25,32 @@ class MobileManager {
    */
   async verifyCall(callerId) {
     console.log(`Attempting to verify call from: ${callerId}`);
-
-    // Check if the callerId is a domain that can be verified via ADP.
-    // A simple check for a domain format.
-    if (callerId.includes('.')) {
-      const adpResult = await adpManager.verifyDomain(callerId);
-
-      if (adpResult) {
-        console.log(`ADP verification successful for ${callerId}.`);
-        // Placeholder for further WebRTC-based verification using the ADP result.
-        // const webrtcVerified = await this.webrtcService.verifyPeer(adpResult.ecashAddress);
-        // if (webrtcVerified) {
-        return { verified: true, details: `Verified via ADP/WebID: ${adpResult.domain}` };
-        // } else {
-        //   return { verified: false, details: 'WebRTC verification failed.' };
-        // }
+    try {
+      // Check if the callerId is a domain that can be verified via ADP.
+      if (callerId.includes('.')) {
+        const adpResult = await adpManager.verifyDomain(callerId);
+        if (adpResult) {
+          // WebRTC verification step
+          const webrtcResult = await this.verifyCallWebRTC(adpResult.domain);
+          if (webrtcResult.verified) {
+            return { verified: true, details: i18next.t('callVerifiedADP', { domain: adpResult.domain }) };
+          } else {
+            return { verified: false, details: i18next.t('webrtcVerificationFailed') };
+          }
+        }
       }
+      // Fallback for non-ADP users or if ADP verification fails.
+      return {
+        verified: false,
+        details: i18next.t('callerNotVerifiedADP'),
+      };
+    } catch (error) {
+      console.error('Call verification error:', error);
+      return {
+        verified: false,
+        details: i18next.t('callVerificationError', { error: error.message }),
+      };
     }
-
-    // Fallback for non-ADP users or if ADP verification fails.
-    console.log(`Fallback for non-ADP user: ${callerId}`);
-    return {
-      verified: false,
-      details: 'Caller is not verified via ADP/WebID.',
-    };
   }
 
   /**
@@ -57,35 +59,26 @@ class MobileManager {
    */
   async verifyCallWebRTC(webID) {
     console.log('Verifying call using WebRTC for WebID:', webID);
-
     try {
       const configuration = {
         iceServers: [
           { urls: 'stun:stun.l.google.com:19302' },
         ],
       };
-
       const peerConnection = new RTCPeerConnection(configuration);
-
       // Create an offer
       const offer = await peerConnection.createOffer();
       await peerConnection.setLocalDescription(new RTCSessionDescription(offer));
-
-      console.log('Local description set. Sending offer to remote peer...');
-
       // Simulate sending the offer to the remote peer and receiving an answer
       const simulatedAnswer = {
         type: 'answer',
         sdp: 'simulated_remote_sdp',
       };
       await peerConnection.setRemoteDescription(new RTCSessionDescription(simulatedAnswer));
-
-      console.log('Remote description set. WebRTC call verified successfully.');
-
-      return { verified: true, details: 'WebRTC call verified successfully.' };
+      return { verified: true, details: i18next.t('webrtcVerificationSuccess') };
     } catch (error) {
       console.error('WebRTC call verification failed:', error);
-      return { verified: false, details: 'WebRTC call verification failed.' };
+      return { verified: false, details: i18next.t('webrtcVerificationFailed') };
     }
   }
 

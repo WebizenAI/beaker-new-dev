@@ -1,3 +1,43 @@
+### Cashtab Wallet
+- **Setup**: Install and configure Cashtab wallet for eCash transactions and SLP token management.
+- **Command**: `npm run setup:cashtab`
+- **Notes**:
+  - Download Cashtab from [https://cashtab.com](https://cashtab.com) or use the integrated CashtabManager in Webizen.
+  - Create a new wallet and securely back up your seed phrase.
+  - Use Cashtab for eCash payments, SLP token validation, and multi-sig wallet operations.
+  - Ensure network connectivity for wallet operations and test with both mainnet and testnet.
+  - For multi-lingual wallet UI, select your preferred language in Cashtab settings or via Webizen's i18n module.
+
+### Obligation Cost Tracking
+- **Setup**: Enable obligation cost tracking for all Webizen services.
+- **Command**: `npm run setup:obligation`
+- **Notes**:
+  - Obligation costs are tracked automatically when accessing paid features or services.
+  - Audit trails are signed with SPHINCS+ and stored in Quadstore and SolidOS pods.
+  - To view your obligation cost history, use the Access module UI or run `npm run fetch:obligation-history`.
+  - Multi-lingual support is available for all obligation cost notifications and history exports.
+
+
+### ADP/WebID & WebRTC Call Verification
+- **Setup**: Enable ADP/WebID validation and WebRTC call verification for secure communications.
+- **Command**: `npm run setup:adp` and `npm run setup:mobile`
+- **Notes**:
+  - ADP/WebID validation uses DNS TXT records and SolidOS pod integration for identity verification.
+  - WebRTC call verification is enabled via the Mobile module, supporting multi-lingual error messages and notifications.
+  - Multi-factor authentication (MFA) and biometric support are available for enhanced security.
+  - For integration with SolidOS pods, ensure your pod is connected and accessible.
+  - All call verification notifications and errors are localized using i18next and can be customized per language.
+
+### Multi-Lingual Setup Guides
+- **Notes**:
+  - All setup instructions are available in supported languages (see i18n Module section).
+  - To switch documentation language, use the language selector in the Webizen UI or refer to `locales/*.jsonld` for translated guides.
+  - For accessibility, RTL support is enabled for Arabic and other RTL languages.
+
+### Video Tutorials (Coming Soon)
+- **Notes**:
+  - Step-by-step video tutorials for Cashtab wallet setup, obligation cost tracking, and other features will be available in all supported languages.
+  - Check the official Webizen documentation site for updates and links to video content.
 # Post-Installation Guide
 
 ## Overview

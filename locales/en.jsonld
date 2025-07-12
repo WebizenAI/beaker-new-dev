@@ -6,6 +6,13 @@
   "translations": {
     "language_selection": "Language Selection",
     "select_language": "Select Language",
-    "language_dropdown": "Language Dropdown"
+    "language_dropdown": "Language Dropdown",
+    "callVerifiedADP": "Verified via ADP/WebID: {{domain}}",
+    "webrtcVerificationSuccess": "WebRTC call verified successfully.",
+    "webrtcVerificationFailed": "WebRTC call verification failed.",
+    "callerNotVerifiedADP": "Caller is not verified via ADP/WebID.",
+    "callVerificationError": "Call verification error: {{error}}",
+    "callVerificationFailure": "Call verification failed for {{callerId}}.",
+    "notificationTitle": "Call Verification"
   }
 }
