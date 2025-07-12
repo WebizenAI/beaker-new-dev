@@ -4,6 +4,26 @@ const { getSolidDataset, saveSolidDatasetInContainer } = require('@inrupt/solid-
 
 const quadstoreInstance = new Quadstore();
 const comunicaEngine = newEngine();
+const cache = new Map();
+
+/**
+ * Caches query results to optimize performance.
+ * @param {string} query - The SPARQL query string.
+ * @param {object} results - The query results to cache.
+ */
+function cacheQueryResults(query, results) {
+  cache.set(query, results);
+  console.log(`Query cached: ${query}`);
+}
+
+/**
+ * Retrieves cached query results.
+ * @param {string} query - The SPARQL query string.
+ * @returns {object|null} The cached results or null if not found.
+ */
+function getCachedQueryResults(query) {
+  return cache.get(query) || null;
+}
 
 async function storeRDFData(data) {
   console.log('Storing RDF data...');
@@ -17,9 +37,16 @@ async function storeRDFData(data) {
 }
 
 async function queryRDFData(query) {
-  console.log('Querying RDF data...');
+  console.log('Querying RDF data with cache...');
+  const cachedResults = getCachedQueryResults(query);
+  if (cachedResults) {
+    console.log('Returning cached results.');
+    return cachedResults;
+  }
+
   try {
     const results = await comunicaEngine.query(query, { sources: [quadstoreInstance] });
+    cacheQueryResults(query, results);
     console.log('Query results:', results);
     return results;
   } catch (error) {

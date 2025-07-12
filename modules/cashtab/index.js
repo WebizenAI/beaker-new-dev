@@ -124,6 +124,48 @@ export class CashtabManager {
     console.log('Network failure detected. Retrying...');
     walletLib.retryNetworkOperation();
   }
+
+  /**
+   * Caches wallet operations to reduce network calls.
+   * @param {string} operation - The operation to cache.
+   * @param {object} data - The data to cache.
+   */
+  cacheOperation(operation, data) {
+    if (!this.cache) {
+      this.cache = new Map();
+    }
+    this.cache.set(operation, data);
+    console.log(`Operation cached: ${operation}`);
+  }
+
+  /**
+   * Retrieves cached data for a wallet operation.
+   * @param {string} operation - The operation to retrieve.
+   * @returns {object|null} The cached data or null if not found.
+   */
+  getCachedOperation(operation) {
+    return this.cache ? this.cache.get(operation) : null;
+  }
+
+  /**
+   * Enhanced network failure handling with retry logic.
+   */
+  async handleNetworkFailureWithRetry(operation, retryCount = 3) {
+    let attempts = 0;
+    while (attempts < retryCount) {
+      try {
+        console.log(`Attempting operation: ${operation} (Attempt ${attempts + 1})`);
+        const result = await walletLib.performOperation(operation);
+        return result;
+      } catch (error) {
+        attempts++;
+        console.error(`Operation failed: ${operation}. Retrying... (${attempts}/${retryCount})`);
+        if (attempts >= retryCount) {
+          throw new Error(`Operation failed after ${retryCount} attempts: ${error.message}`);
+        }
+      }
+    }
+  }
 }
 
 export const cashtabManager = new CashtabManager();

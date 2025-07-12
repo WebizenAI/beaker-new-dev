@@ -104,6 +104,40 @@ class WebizenAPI {
   }
 
   /**
+   * Logs API request details for monitoring and debugging.
+   * @param {string} clientId - The ID of the client making the request.
+   * @param {string} endpoint - The API endpoint being accessed.
+   * @param {object} payload - The request payload.
+   */
+  logRequest(clientId, endpoint, payload) {
+    logging.log({
+      level: 'info',
+      message: 'API Request',
+      clientId,
+      endpoint,
+      payload,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  /**
+   * Applies rate limiting to API requests.
+   * @param {string} clientId - The ID of the client making the request.
+   * @throws {Error} If the client exceeds the rate limit.
+   */
+  applyRateLimiting(clientId) {
+    if (this.isRateLimited(clientId)) {
+      logging.log({
+        level: 'warn',
+        message: 'Rate limit exceeded',
+        clientId,
+        timestamp: new Date().toISOString(),
+      });
+      throw new Error('Rate limit exceeded. Please try again later.');
+    }
+  }
+
+  /**
    * Checks if a client has exceeded the rate limit.
    * @param {string} clientId
    * @returns {boolean}
