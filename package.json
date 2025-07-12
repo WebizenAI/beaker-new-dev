@@ -1,6 +1,6 @@
 {
   "name": "beaker-new-dev",
-  "version": "1.0.0",
+  "version": "0.06",
   "description": "Webizen project",
   "main": "index.js",
   "scripts": {
