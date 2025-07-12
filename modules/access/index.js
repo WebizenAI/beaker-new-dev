@@ -6,8 +6,8 @@
  */
 
 // In a real implementation, these would be required from the services directory.
-const CashtabManager = require('../cashtab');
-// const quadstoreService = require('../../services/quadstore');
+import { cashtabManager } from '../cashtab/index.js';
+// import { quadstoreService } from '../../services/quadstore.js';
 // const securityService = require('../../services/crypto'); // For SPHINCS+
 // const { DataFactory } = require('n3');
 // const { namedNode, literal, quad } = DataFactory;
@@ -17,9 +17,11 @@ const MAX_PAYMENT_RETRIES = 3;
 const RETRY_DELAY_MS = 1000;
 
 
-class AccessManager {
-  constructor() {
+export class AccessManager {
+  constructor(cashtab) {
     console.log('AccessManager initialized');
+    // In a more robust implementation, services would be injected.
+    this.cashtab = cashtab;
   }
 
   /**
@@ -73,7 +75,7 @@ class AccessManager {
    */
   async checkBalance(walletId) {
     // In a real implementation, this would make a call to a Chronik indexer via CashtabManager.
-    const wallet = CashtabManager.wallets.get(walletId);
+    const wallet = this.cashtab.wallets.get(walletId);
     return wallet ? (wallet.balance || 250000) : 0; // Mock balance for testing.
   }
 
@@ -83,7 +85,7 @@ class AccessManager {
    * @returns {Promise<boolean>}
    */
   async validateToken(tokenId) {
-    return await CashtabManager.validateSLPToken(tokenId);
+    return await this.cashtab.validateSLPToken(tokenId);
   }
 
   /**
@@ -97,7 +99,7 @@ class AccessManager {
       try {
         const txDetails = { to: 'webizen_treasury_address', amount };
         // This would require the user's private key, handled securely.
-        await CashtabManager.createAndSignTransaction(txDetails, 'dummy_private_key_for_' + walletId);
+        await this.cashtab.createAndSignTransaction(txDetails, 'dummy_private_key_for_' + walletId);
         return true; // Payment successful
       } catch (error) {
         console.warn(`Payment attempt ${i + 1} failed: ${error.message}. Retrying...`);
@@ -108,9 +110,6 @@ class AccessManager {
     }
     return false; // All retries failed
   }
-
-  
-    }
 
   async trackObligationCost(walletId, serviceName, cost) {
     const costDetails = {
@@ -156,6 +155,6 @@ class AccessManager {
       // In a real app, this would use the centralized logging service.
     }
   }
+}
 
-
-module.exports = new AccessManager();
+export const accessManager = new AccessManager(cashtabManager);

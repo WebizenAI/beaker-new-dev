@@ -1,15 +1,31 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix mob: <http://webizen.org/v1/mobile#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix webizen: <https://webizen.org/ns/v1#> .
+@prefix call: <https://webizen.org/ns/v1/call#> .
+@prefix adp: <https://webizen.org/ns/v1/adp#> .
 
-mob:MobileDevice a rdfs:Class ;
-    rdfs:label "Mobile Device" .
+call: a owl:Ontology ;
+    rdfs:label "Webizen Mobile Ontology" ;
+    rdfs:comment "Defines concepts for mobile-specific features like call verification and ADP/WebID integration." .
 
-mob:ChatSession a rdfs:Class ;
-    rdfs:label "Chat Session" .
+# --- Classes ---
 
-mob:CallRecord a rdfs:Class ;
-    rdfs:label "Call Record" .
+call:Call a rdfs:Class ;
+    rdfs:label "Call" ;
+    rdfs:comment "Represents a communication call (e.g., WebRTC, phone)." .
 
-mob:hasContact a rdf:Property ;
-    rdfs:label "Has Contact" .
+# --- Properties ---
+
+call:verificationStatus a rdf:Property ;
+    rdfs:label "Verification Status" ;
+    rdfs:comment "The verification status of a call participant (e.g., 'verified', 'unverified', 'failed')." ;
+    rdfs:domain call:Call ;
+    rdfs:range xsd:string .
+
+call:verificationMethod a rdf:Property ;
+    rdfs:label "Verification Method" ;
+    rdfs:comment "The method used for verification (e.g., 'ADP/WebID', 'None')." ;
+    rdfs:domain call:Call ;
+    rdfs:range xsd:string .

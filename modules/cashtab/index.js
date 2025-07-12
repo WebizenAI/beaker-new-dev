@@ -6,11 +6,13 @@
  * This module is a refactor of the concepts from @cashtab/wallet-lib.
  */
 
+import { securityManager } from '../security/index.js';
+
 // In a real implementation, we would import libraries for eCash,
 // SLP token handling, and cryptography (e.g., @cashtab/wallet-lib or similar).
 // const { Wallet, ECDSA } = require('some-ecash-lib');
 
-class CashtabManager {
+export class CashtabManager {
   constructor() {
     this.wallets = new Map();
     console.log('CashtabManager initialized');
@@ -93,11 +95,8 @@ class CashtabManager {
       // 1. Construct the transaction based on details.
       const unsignedTx = `unsigned_tx_for_${transactionDetails.amount}_to_${transactionDetails.to}`;
 
-      // 2. Sign the transaction hash with the private key using ECDSA.
-      // const signature = ECDSA.sign(hash(unsignedTx), privateKey);
-      const signature = `signed_with_${privateKey}`; // Placeholder
-      const signedTx = `${unsignedTx}_${signature}`;
-
+      // 2. Sign the transaction hash with the private key using the SecurityManager.
+      const signedTx = await securityManager.signWithEcdsa(unsignedTx, privateKey);
       console.log('Transaction signed successfully.');
       return signedTx;
     } catch (error) {
@@ -108,4 +107,4 @@ class CashtabManager {
   }
 }
 
-module.exports = new CashtabManager();
+export const cashtabManager = new CashtabManager();
