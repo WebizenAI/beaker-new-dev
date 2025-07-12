@@ -4,6 +4,9 @@ import { mobileManager } from '../../modules/mobile';
 const Mobile = () => {
   const [incomingCall, setIncomingCall] = useState(null);
   const [verificationStatus, setVerificationStatus] = useState(null);
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [message, setMessage] = useState('');
+  const [domain, setDomain] = useState('');
 
   // Simulate an incoming call for demonstration purposes
   const simulateCall = (callerId) => {
@@ -32,6 +35,22 @@ const Mobile = () => {
     if (!verificationStatus) return 'text-gray-500';
     if (verificationStatus.details === 'Verifying...') return 'text-blue-500';
     return verificationStatus.verified ? 'text-green-600' : 'text-red-600';
+  };
+
+  const handleSendSMS = () => {
+    // Logic to send SMS
+    console.log(`Sending SMS to ${phoneNumber}: ${message}`);
+    // Reset fields after sending
+    setPhoneNumber('');
+    setMessage('');
+  };
+
+  const handleVerifyCall = () => {
+    // Logic to verify call
+    console.log(`Verifying call for domain: ${domain}`);
+    mobileManager.verifyCall(domain).then(status => {
+      setVerificationStatus(status);
+    });
   };
 
   return (
@@ -73,6 +92,48 @@ const Mobile = () => {
             </button>
             <button className="px-4 py-2 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75">
               Accept
+            </button>
+          </div>
+
+          {/* SMS Section */}
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold mb-2">Send SMS</h2>
+            <input
+              type="text"
+              placeholder="Phone Number"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              className="w-full p-2 border rounded mb-2"
+            />
+            <textarea
+              placeholder="Message"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              className="w-full p-2 border rounded mb-2"
+            ></textarea>
+            <button
+              onClick={handleSendSMS}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Send SMS
+            </button>
+          </div>
+
+          {/* Call Verification Section */}
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold mb-2">Verify Call</h2>
+            <input
+              type="text"
+              placeholder="Domain"
+              value={domain}
+              onChange={(e) => setDomain(e.target.value)}
+              className="w-full p-2 border rounded mb-2"
+            />
+            <button
+              onClick={handleVerifyCall}
+              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+            >
+              Verify Call
             </button>
           </div>
         </div>

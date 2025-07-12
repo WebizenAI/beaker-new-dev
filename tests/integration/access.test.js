@@ -102,5 +102,22 @@ describe('AccessManager Integration Tests', () => {
       expect(trackObligationCostSpy).toHaveBeenCalledWith(walletId, 'initial_access', 0);
       trackObligationCostSpy.mockRestore();
     });
+
+    test('should log obligation cost details correctly', async () => {
+      const walletId = 'test_wallet';
+      const serviceName = 'test_service';
+      const cost = 0.01;
+
+      await AccessManager.trackObligationCost(walletId, serviceName, cost);
+
+      const obligationCosts = AccessManager.obligationCosts;
+      expect(obligationCosts).toContainEqual({
+        walletId,
+        serviceName,
+        cost,
+        currency: 'XEC',
+        timestamp: expect.any(String),
+      });
+    });
   });
 });

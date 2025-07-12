@@ -1,6 +1,8 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix sec: <http://webizen.org/v1/security#> .
+@prefix : <http://example.org/security#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 sec:Key a rdfs:Class ;
     rdfs:label "Cryptographic Key" .
@@ -13,3 +15,31 @@ sec:keyType a rdf:Property ;
 
 sec:signatureAlgorithm a rdf:Property ;
     rdfs:label "Signature Algorithm" .
+
+:KeyMetadata a rdfs:Class ;
+  rdfs:label "Key Metadata" ;
+  rdfs:comment "Metadata for cryptographic keys including type and usage." .
+
+:SignatureType a rdfs:Class ;
+  rdfs:label "Signature Type" ;
+  rdfs:comment "Types of cryptographic signatures supported." .
+
+:SPHINCSPlus a :SignatureType ;
+  rdfs:label "SPHINCS+" ;
+  rdfs:comment "Post-quantum secure signature algorithm." .
+
+:ECDSA a :SignatureType ;
+  rdfs:label "ECDSA" ;
+  rdfs:comment "Elliptic Curve Digital Signature Algorithm." .
+
+:RSA a :SignatureType ;
+  rdfs:label "RSA" ;
+  rdfs:comment "Rivest-Shamir-Adleman encryption algorithm." .
+
+:AES a :SignatureType ;
+  rdfs:label "AES" ;
+  rdfs:comment "Advanced Encryption Standard." .
+
+:Ed25519 a :SignatureType ;
+  rdfs:label "Ed25519" ;
+  rdfs:comment "High-speed elliptic curve signature algorithm." .

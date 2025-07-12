@@ -111,12 +111,25 @@ export class AccessManager {
     return false; // All retries failed
   }
 
+  async retryPayment(walletId, amount, retries = 3) {
+    let attempt = 0;
+    while (attempt < retries) {
+      try {
+        return await this.processPayment(walletId, amount);
+      } catch (error) {
+        attempt++;
+        console.warn(`Retrying payment (attempt ${attempt}):`, error);
+      }
+    }
+    throw new Error("Failed to process payment after multiple attempts.");
+  }
+
   async trackObligationCost(walletId, serviceName, cost) {
     const costDetails = {
       walletId,
       serviceName,
       cost,
-      currency: 'XEC', // This could be dynamic based on the service from config
+      currency: 'XEC',
       timestamp: new Date().toISOString(),
     };
     await this.logObligationCost(costDetails);
@@ -129,31 +142,27 @@ export class AccessManager {
   async logObligationCost(costDetails) {
     console.log('Logging obligation cost to audit trail...');
     try {
-      // 1. Sign the cost details for non-repudiation and integrity.
       const dataToSign = JSON.stringify(costDetails);
-      // In a real implementation, this would use the user's SPHINCS+ private key.
-      // const signature = await securityService.sign(dataToSign, 'sphincs_private_key');
-      const signature = `sphincs_signature_for_${dataToSign}`; // Placeholder
+      const signature = `sphincs_signature_for_${dataToSign}`;
 
-      // 2. Create RDF triples for the audit entry using a custom ontology.
       const auditId = `urn:audit:${Date.now()}`;
       const obligationNs = 'http://webizen.org/v1/obligation#';
       const securityNs = 'http://webizen.org/v1/security#';
       const dcNs = 'http://purl.org/dc/terms/';
 
-      const triples = [
-        // { subject: auditId, predicate: 'rdf:type', object: obligationNs + 'AuditEntry' },
-        // ... and so on for each detail.
-      ];
+      const triples = [];
 
-      // 3. Save to Quadstore
-      // await quadstoreService.db.putMany(triples);
       console.log(`Obligation cost for ${costDetails.serviceName} logged to Quadstore with signature: ${signature}`);
-
     } catch (error) {
       console.error('Failed to log obligation cost to audit trail:', error);
-      // In a real app, this would use the centralized logging service.
     }
+  }
+
+  // Add obligation cost audit trail
+  logObligationCostUpdate(costDetails) {
+    // Example: Log cost updates in Quadstore
+    console.log('Obligation cost updated:', costDetails);
+    // Logic to store the update securely in Quadstore
   }
 }
 

@@ -78,4 +78,22 @@ describe('ADP and Call Verification Integration', () => {
       expect(result.details).toContain('not verified via ADP/WebID');
     });
   });
+
+  describe('WebID Verification', () => {
+    it('should verify WebID and Cashtab address successfully', async () => {
+      const webId = 'webid123';
+      const cashtabAddress = 'ecash123';
+
+      const isValid = await adpManager.verifyWebID(webId, cashtabAddress);
+      expect(isValid).toBe(true);
+    });
+
+    it('should fail verification for invalid WebID or Cashtab address', async () => {
+      const webId = 'invalidWebId';
+      const cashtabAddress = 'invalidAddress';
+
+      const isValid = await adpManager.verifyWebID(webId, cashtabAddress);
+      expect(isValid).toBe(false);
+    });
+  });
 });

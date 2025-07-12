@@ -13,15 +13,16 @@ const Access = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [obligationCost, setObligationCost] = useState(0);
   const [history, setHistory] = useState([]);
+  const [domain, setDomain] = useState('');
+  const [webId, setWebId] = useState('');
+  const [cashtabAddress, setCashtabAddress] = useState('');
+  const [obligationCostHistory, setObligationCostHistory] = useState([]);
 
   // Mock data for obligation cost history
   const mockHistory = [
     { timestamp: new Date().toISOString(), serviceName: 'initial_access', cost: 0, currency: 'XEC' },
     { timestamp: new Date(Date.now() - 100000).toISOString(), serviceName: 'grok_api', cost: 0.01, currency: 'USD' },
   ];
-
-  useEffect(() => {
-    // Effect to update balance when walletId changes
 
   useEffect(() => {
     // Effect to update balance when walletId changes
@@ -81,6 +82,61 @@ const Access = () => {
     }
   };
 
+  const handleDomainVerification = async () => {
+    if (!domain) {
+      setStatusMessage('Please enter a domain to verify.');
+      return;
+    }
+    setIsProcessing(true);
+    setStatusMessage('Verifying domain...');
+
+    try {
+      // Simulate domain verification logic
+      const isValidDomain = await AccessManager.verifyDomain(domain);
+      if (isValidDomain) {
+        setStatusMessage('Domain verified successfully.');
+      } else {
+        setStatusMessage('Domain verification failed. Domain may not be linked to an eCash account.');
+      }
+    } catch (error) {
+      setStatusMessage(`Error during domain verification: ${error.message}`);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleCallVerification = async () => {
+    if (!webId || !cashtabAddress) {
+      setStatusMessage('Please enter both WebID and Cashtab address to verify.');
+      return;
+    }
+    setIsProcessing(true);
+    setStatusMessage('Verifying call details...');
+
+    try {
+      // Simulate call verification logic
+      const isValidCall = await AccessManager.verifyCall(webId, cashtabAddress);
+      if (isValidCall) {
+        setStatusMessage('Call verified successfully.');
+      } else {
+        setStatusMessage('Call verification failed. Invalid WebID or Cashtab address.');
+      }
+    } catch (error) {
+      setStatusMessage(`Error during call verification: ${error.message}`);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const fetchObligationCostHistory = () => {
+    // Example: Fetch obligation cost history from Quadstore
+    const history = [
+      { id: 1, description: 'License for Chatterbox', cost: '100 XEC', date: '2025-07-01' },
+      { id: 2, description: 'Google Cloud TTS', cost: '50 XEC', date: '2025-07-05' },
+    ];
+    setObligationCostHistory(history);
+  };
+
   return (
     <div className="p-4 font-sans" role="application" aria-label="Webizen Access Control">
       <h1 className="text-2xl font-bold mb-4">Access Control</h1>
@@ -133,6 +189,83 @@ const Access = () => {
         </button>
       </div>
 
+      {/* Domain Verification Section */}
+      <div className="mb-6 p-4 border rounded">
+        <h2 className="text-xl font-semibold mb-2">Domain Verification</h2>
+        <div className="mb-4">
+          <label htmlFor="domain" className="block mb-1 font-medium">
+            Domain
+          </label>
+          <input
+            id="domain"
+            type="text"
+            value={domain}
+            onChange={(e) => setDomain(e.target.value)}
+            placeholder="Enter domain to verify"
+            className="w-full p-2 border rounded"
+            aria-describedby="domainHelp"
+          />
+          <p id="domainHelp" className="text-sm text-gray-500 mt-1">
+            Provide a domain to verify its eCash account.
+          </p>
+        </div>
+        <button
+          onClick={handleDomainVerification}
+          disabled={isProcessing}
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400"
+          aria-busy={isProcessing}
+        >
+          {isProcessing ? 'Verifying...' : 'Verify Domain'}
+        </button>
+      </div>
+
+      {/* Call Verification Section */}
+      <div className="mb-6 p-4 border rounded">
+        <h2 className="text-xl font-semibold mb-2">Call Verification</h2>
+        <div className="mb-4">
+          <label htmlFor="webId" className="block mb-1 font-medium">
+            WebID
+          </label>
+          <input
+            id="webId"
+            type="text"
+            value={webId}
+            onChange={(e) => setWebId(e.target.value)}
+            placeholder="Enter WebID"
+            className="w-full p-2 border rounded"
+            aria-describedby="webIdHelp"
+          />
+          <p id="webIdHelp" className="text-sm text-gray-500 mt-1">
+            Provide a WebID for call verification.
+          </p>
+        </div>
+        <div className="mb-4">
+          <label htmlFor="cashtabAddress" className="block mb-1 font-medium">
+            Cashtab Address
+          </label>
+          <input
+            id="cashtabAddress"
+            type="text"
+            value={cashtabAddress}
+            onChange={(e) => setCashtabAddress(e.target.value)}
+            placeholder="Enter Cashtab address"
+            className="w-full p-2 border rounded"
+            aria-describedby="cashtabHelp"
+          />
+          <p id="cashtabHelp" className="text-sm text-gray-500 mt-1">
+            Provide a Cashtab address for call verification.
+          </p>
+        </div>
+        <button
+          onClick={handleCallVerification}
+          disabled={isProcessing}
+          className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:bg-gray-400"
+          aria-busy={isProcessing}
+        >
+          {isProcessing ? 'Verifying...' : 'Verify Call'}
+        </button>
+      </div>
+
       {/* Status Section */}
       <div role="status" aria-live="polite" className="p-4 border rounded bg-gray-50">
         <h2 className="text-xl font-semibold mb-2">Status</h2>
@@ -140,57 +273,44 @@ const Access = () => {
         <p><strong>Obligation Cost Paid:</strong> {obligationCost} XEC</p>
       </div>
 
-              <p>{statusMessage}</p>
-        <p><strong>Obligation Cost Paid:</strong> {obligationCost} XEC</p>
+      {/* Obligation Cost History Section */}
+      <div className="mt-6 p-4 border rounded">
+        <h2 className="text-xl font-semibold mb-2">Obligation Cost History</h2>
+        <button
+          onClick={fetchObligationCostHistory}
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 mb-4"
+        >
+          Fetch Obligation Cost History
+        </button>
+        <table className="w-full border-collapse border border-gray-300">
+          <thead>
+            <tr>
+              <th className="border border-gray-300 px-4 py-2">ID</th>
+              <th className="border border-gray-300 px-4 py-2">Description</th>
+              <th className="border border-gray-300 px-4 py-2">Cost</th>
+              <th className="border border-gray-300 px-4 py-2">Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {obligationCostHistory.map((entry) => (
+              <tr key={entry.id}>
+                <td className="border border-gray-300 px-4 py-2">{entry.id}</td>
+                <td className="border border-gray-300 px-4 py-2">{entry.description}</td>
+                <td className="border border-gray-300 px-4 py-2">{entry.cost}</td>
+                <td className="border border-gray-300 px-4 py-2">{entry.date}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
-      {/* Obligation Cost History Section */}
-      {history.length > 0 && (
-        <div className="mt-6 p-4 border rounded">
-          <h2 className="text-xl font-semibold mb-2">Obligation Cost History</h2>
-          <div className="mb-4 space-x-2">
-            <button
-              onClick={() => console.log('Exporting history as CSV...')}
-              className="px-3 py-1 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 text-sm"
-            >
-              Export as CSV
-            </button>
-            <button
-              onClick={() => console.log('Exporting history as RDF...')}
-              className="px-3 py-1 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 text-sm"
-            >
-              Export as RDF
-            </button>
-          </div>
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr>
-                <th className="p-2 border-b">Timestamp</th>
-                <th className="p-2 border-b">Service</th>
-                <th className="p-2 border-b text-right">Cost</th>
-              </tr>
-            </thead>
-            <tbody>
-              {history.map((item, index) => (
-                <tr key={index}>
-                  <td className="p-2 border-b">{new Date(item.timestamp).toLocaleString()}</td>
-                  <td className="p-2 border-b">{item.serviceName}</td>
-                  <td className="p-2 border-b text-right">
-                    {item.cost} {item.currency}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </div>
-  );
-};
-
-export default Access;
-
-
+      {/* Accessibility Enhancements */}
+      <div role="region" aria-labelledby="accessibility-section" className="p-4 border rounded">
+        <h2 id="accessibility-section" className="text-xl font-semibold mb-2">Accessibility Features</h2>
+        <p role="note" aria-live="polite" className="text-sm text-gray-500">
+          This application supports screen readers and ARIA attributes for improved accessibility.
+        </p>
+      </div>
     </div>
   );
 };

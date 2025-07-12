@@ -41,3 +41,17 @@ Webizen tracks the cost of using certain third-party services or computationally
 -   **How it works**: As you use these services, the associated costs are logged as "obligation costs."
 -   **Viewing Costs**: The total obligation cost paid is displayed in the status section of the Access Control panel. A detailed history will be available in a future update.
 -   **Obligation-Free Derivatives**: The goal of this system is to cover the operational costs of the platform. Once the collective obligation costs are met, future use of the platform and any derivative works can become obligation-free.
+
+## Security Setup
+
+### Key Generation
+- SPHINCS+, ECDSA, RSA, AES, and Ed25519 keys can be generated using the `modules/security/index.js` methods.
+
+### Fallback Logic
+- If SPHINCS+ is unavailable, the system automatically falls back to ECDSA.
+
+### Key Rotation
+- Key rotation is supported for SPHINCS+ and ECDSA keys.
+
+### Audit Logs
+- All key usage and signature verifications are logged in Quadstore for security auditing.

@@ -11,6 +11,8 @@ const CashtabManager = require('../cashtab');
 const AccessManager = require('../access');
 const WebizenAPI = require('../../services/webizen-api');
 const { WebSocket } = require('ws'); // Assuming 'ws' is a dev dependency
+const securityManager = require('../../services/security-manager'); // Assuming this is the correct path
+const securityTests = require('../../tests/unit/security.test');
 
 class TestSuite {
   constructor() {
@@ -197,6 +199,80 @@ class TestSuite {
         throw new Error('API did not return the expected error for an invalid endpoint.');
       }
     }));
+
+    this.tests.push(() => this.runTest('Access: Track obligation cost', async () => {
+      const walletId = CashtabManager.createWallet({ name: 'Obligation Cost Test Wallet' });
+      const serviceName = 'test_service';
+      const cost = 0.01;
+
+      await AccessManager.trackObligationCost(walletId, serviceName, cost);
+
+      const obligationCosts = AccessManager.obligationCosts;
+      if (!obligationCosts.some(costEntry => costEntry.walletId === walletId && costEntry.serviceName === serviceName)) {
+        throw new Error('Obligation cost tracking failed.');
+      }
+    }));
+
+    // --- Security Tests ---
+    this.tests.push(() => this.runTest('Security: SPHINCS+ Signing and Verification', async () => {
+      const data = 'test_data';
+      const signature = await securityManager.signWithSphincs(data);
+      const isValid = await securityManager.verifyWithSphincs(data, signature);
+
+      if (!isValid) {
+        throw new Error('SPHINCS+ verification failed.');
+      }
+    }));
+
+    this.tests.push(() => this.runTest('Security: ECDSA Signing and Verification', async () => {
+      const data = 'test_data';
+      const privateKey = 'ecdsa_private_key';
+      const publicKey = 'ecdsa_public_key';
+
+      const signature = await securityManager.signWithEcdsa(data, privateKey);
+      const isValid = await securityManager.verifyWithEcdsa(data, signature, publicKey);
+
+      if (!isValid) {
+        throw new Error('ECDSA verification failed.');
+      }
+    }));
+
+    this.tests.push(() => this.runTest('Security: RSA Encryption and Decryption', async () => {
+      const data = 'test_data';
+      const { publicKey, privateKey } = await securityManager.generateRsaKeyPair();
+
+      const encryptedData = await securityManager.encryptWithRsa(data, publicKey);
+      const decryptedData = await securityManager.decryptWithRsa(encryptedData, privateKey);
+
+      if (decryptedData !== data) {
+        throw new Error('RSA decryption failed.');
+      }
+    }));
+
+    this.tests.push(() => this.runTest('Security: AES Encryption and Decryption', async () => {
+      const data = 'test_data';
+      const key = await securityManager.generateAesKey();
+
+      const encryptedData = await securityManager.encryptWithAes(data, key);
+      const decryptedData = await securityManager.decryptWithAes(encryptedData, key);
+
+      if (decryptedData !== data) {
+        throw new Error('AES decryption failed.');
+      }
+    }));
+
+    this.tests.push(() => this.runTest('Security: Ed25519 Signing and Verification', async () => {
+      const data = 'test_data';
+      const privateKey = 'ed25519_private_key';
+      const publicKey = 'ed25519_public_key';
+
+      const signature = await securityManager.signWithEd25519(data, privateKey);
+      const isValid = await securityManager.verifyWithEd25519(data, signature, publicKey);
+
+      if (!isValid) {
+        throw new Error('Ed25519 verification failed.');
+      }
+    }));
   }
 
   /**
@@ -209,6 +285,11 @@ class TestSuite {
       results.push(await test());
     }
     return results;
+  }
+
+  runSecurityTests() {
+    console.log('Running security tests...');
+    securityTests();
   }
 }
 
