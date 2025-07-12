@@ -2158,3 +2158,13 @@ This file tracks the completed tasks as per the Webizen v0.25 Advanced Prompt Pl
 - **Details**:
     - **`.gitignore`**: Updated to include more comprehensive ignore patterns for OS-generated files, common IDEs, and build/test artifacts.
     - **`README.md`**: Rewrote the introduction to better reflect the project's current state and vision. Added a "Core Features" section to highlight key functionalities. Updated the "Project Structure" section to be more descriptive.
+
+### Project Maintenance: Create API Specification
+- **Task**: Write a complete API specification in markdown.
+- **Status**: Completed.
+- **Details**:
+    - Created `docs/api-specification.md`.
+    - The document provides a comprehensive overview of the Webizen API and its core modules.
+    - It details the WebSocket-based API, including message format and endpoints.
+    - It documents the public methods for key modules: `SecurityManager`, `CashtabManager`, `AccessManager`, `AdpManager`, and `MobileManager`.
+    - Includes high-level descriptions of the P2P modules and shared services.
