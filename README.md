@@ -1,4 +1,4 @@
-# Webizen v0.25
+# Webizen v0.25 - Status - v0.06
 
 Webizen is a humanitarian ICT proof-of-concept and a decentralized social-web browser, refactored and modernized from the original Beaker Browser. It is delivered as a cross-platform solution: a WebExtension, an Electron desktop app, and a React Native mobile app.
 
