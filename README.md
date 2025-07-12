@@ -137,10 +137,6 @@ npm test -- --coverage
     npm run burnthemall
     ```
 
-## Contributing
-
-Contributions are welcome! Please see CONTRIBUTING.md for details on how to get started.
-
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+The beaker browser project and various related componetns were / are licensed under the MIT License.   A license is yet to be created for this presently incomplete project.
