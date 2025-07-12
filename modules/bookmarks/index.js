@@ -46,4 +46,17 @@ class BookmarksManager {
   }
 }
 
-module.exports = new BookmarksManager();
+function addBookmark(bookmarkDetails) {
+  console.log('Adding bookmark:', bookmarkDetails);
+  // Example: Implement bookmark addition functionality
+}
+
+function retrieveBookmarks() {
+  console.log('Retrieving bookmarks...');
+  // Example: Fetch all bookmarks
+}
+
+module.exports = {
+  addBookmark,
+  retrieveBookmarks,
+};

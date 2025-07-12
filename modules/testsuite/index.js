@@ -13,6 +13,12 @@ const WebizenAPI = require('../../services/webizen-api');
 const { WebSocket } = require('ws'); // Assuming 'ws' is a dev dependency
 const securityManager = require('../../services/security-manager'); // Assuming this is the correct path
 const securityTests = require('../../tests/unit/security.test');
+const accessTests = require('../../tests/integration/access.test');
+const adpTests = require('../../tests/integration/adp.test');
+const integrationSecurityTests = require('../../tests/integration/security.test');
+const calendarTests = require('../../tests/integration/calendar.test');
+const mobileTests = require('../../tests/integration/mobile.test');
+const emailTests = require('../../tests/integration/email.test');
 
 class TestSuite {
   constructor() {
@@ -273,6 +279,98 @@ class TestSuite {
         throw new Error('Ed25519 verification failed.');
       }
     }));
+
+    // --- WebID and WebRTC Tests ---
+    this.tests.push(() => this.runTest('WebID: Validate WebID format', async () => {
+      const webid = 'https://example.com/#me';
+      const isValid = await AccessManager.validateWebID(webid);
+
+      if (!isValid) {
+        throw new Error('WebID validation failed for a valid WebID.');
+      }
+    }));
+
+    this.tests.push(() => this.runTest('WebID: Reject invalid WebID format', async () => {
+      const webid = 'invalid_webid_format';
+      const isValid = await AccessManager.validateWebID(webid);
+
+      if (isValid) {
+        throw new Error('Access was granted unexpectedly for an invalid WebID.');
+      }
+    }));
+
+    this.tests.push(() => this.runTest('WebRTC: Establish peer connection', async () => {
+      const peerConnection = AccessManager.createPeerConnection();
+
+      if (!peerConnection) {
+        throw new Error('Failed to create WebRTC peer connection.');
+      }
+
+      // Clean up
+      peerConnection.close();
+    }));
+
+    this.tests.push(() => this.runTest('WebRTC: Handle ICE candidate exchange', async () => {
+      const peerConnection1 = AccessManager.createPeerConnection();
+      const peerConnection2 = AccessManager.createPeerConnection();
+
+      // Mocking the signaling process
+      peerConnection1.onicecandidate = (event) => {
+        if (event.candidate) {
+          peerConnection2.addIceCandidate(event.candidate);
+        }
+      };
+
+      peerConnection2.onicecandidate = (event) => {
+        if (event.candidate) {
+          peerConnection1.addIceCandidate(event.candidate);
+        }
+      };
+
+      // Establishing the connection
+      const offer = await peerConnection1.createOffer();
+      await peerConnection1.setLocalDescription(offer);
+      await peerConnection2.setRemoteDescription(offer);
+
+      const answer = await peerConnection2.createAnswer();
+      await peerConnection2.setLocalDescription(answer);
+      await peerConnection1.setRemoteDescription(answer);
+
+      // Clean up
+      peerConnection1.close();
+      peerConnection2.close();
+    }));
+
+    // --- Key Rotation and Audit Logging Tests ---
+    this.tests.push(() => this.runTest('Security: Key Rotation', async () => {
+      const originalKey = await securityManager.getCurrentKey();
+      await securityManager.rotateKey();
+      const newKey = await securityManager.getCurrentKey();
+
+      if (originalKey === newKey) {
+        throw new Error('Key rotation did not produce a new key.');
+      }
+    }));
+
+    this.tests.push(() => this.runTest('Security: Audit Logging', async () => {
+      const walletId = CashtabManager.createWallet({ name: 'Audit Log Test Wallet' });
+      const serviceName = 'test_service';
+      const action = 'test_action';
+
+      await AccessManager.trackObligationCost(walletId, serviceName, 0.01);
+      await AccessManager.logAuditEntry(walletId, serviceName, action);
+
+      const auditLogs = AccessManager.getAuditLogs(walletId);
+      const obligationCosts = AccessManager.obligationCosts;
+
+      if (auditLogs.length === 0) {
+        throw new Error('Audit logging failed: No logs found.');
+      }
+
+      if (!obligationCosts.some(costEntry => costEntry.walletId === walletId && costEntry.serviceName === serviceName)) {
+        throw new Error('Obligation cost tracking failed.');
+      }
+    }));
   }
 
   /**
@@ -288,8 +386,33 @@ class TestSuite {
   }
 
   runSecurityTests() {
-    console.log('Running security tests...');
-    securityTests();
+    console.log('Running security module tests...');
+    integrationSecurityTests();
+  }
+
+  runAccessTests() {
+    console.log('Running access module tests...');
+    accessTests();
+  }
+
+  runADPTests() {
+    console.log('Running ADP and Mobile module tests...');
+    adpTests();
+  }
+
+  runCalendarTests() {
+    console.log('Running calendar module tests...');
+    calendarTests();
+  }
+
+  runMobileTests() {
+    console.log('Running mobile module tests...');
+    mobileTests();
+  }
+
+  runEmailTests() {
+    console.log('Running email module tests...');
+    emailTests();
   }
 }
 

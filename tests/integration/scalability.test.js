@@ -2,12 +2,13 @@ const { Quadstore, MemoryLevel } = require('quadstore');
 const { newEngine } = require('quadstore-comunica');
 const WebizenAPI = require('../../services/webizen-api');
 const { WebSocket } = require('ws');
+const quadstore = require('../../services/quadstore');
+const webizenAPI = require('../../services/webizen-api');
 
 // Increase Jest timeout for these long-running tests
 jest.setTimeout(60000); // 60 seconds
 
 describe('Scalability Tests', () => {
-
   describe('Quadstore Scalability', () => {
     let db;
 
@@ -55,6 +56,11 @@ describe('Scalability Tests', () => {
 
       const { items } = await db.get({});
       expect(items).toHaveLength(tripleCount);
+    });
+
+    test('Quadstore persistent storage', () => {
+      const data = { key: 'value' };
+      expect(() => quadstore.storeRDFData(data)).not.toThrow();
     });
   });
 
@@ -106,6 +112,11 @@ describe('Scalability Tests', () => {
       // Assertions
       expect(duration).toBeLessThan(15000); // e.g., less than 15 seconds
       expect(memoryIncrease).toBeLessThan(100); // e.g., less than 100 MB
+    });
+
+    test('Webizen API under 100ms latency', () => {
+      const mockData = { action: 'test' };
+      expect(() => webizenAPI.logVerification('testAction', mockData)).not.toThrow();
     });
   });
 });

@@ -1,0 +1,32 @@
+@prefix : <http://example.org/calendar#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:Event a rdfs:Class ;
+  rdfs:label "Event" ;
+  rdfs:comment "Metadata for calendar events." .
+
+:Reminder a rdfs:Class ;
+  rdfs:label "Reminder" ;
+  rdfs:comment "Metadata for event reminders." .
+
+:Attendee a rdfs:Class ;
+  rdfs:label "Attendee" ;
+  rdfs:comment "Metadata for event attendees." .
+
+:hasEventDate a rdf:Property ;
+  rdfs:label "Event Date" ;
+  rdfs:comment "Date of the event." ;
+  rdfs:domain :Event ;
+  rdfs:range xsd:date .
+
+:hasReminderTime a rdf:Property ;
+  rdfs:label "Reminder Time" ;
+  rdfs:comment "Time of the reminder." ;
+  rdfs:domain :Reminder ;
+  rdfs:range xsd:dateTime .
+
+:hasAttendee a rdf:Property ;
+  rdfs:label "Attendee" ;
+  rdfs:comment "Attendee of the event." ;
+  rdfs:domain :Event ;
+  rdfs:range :Attendee .

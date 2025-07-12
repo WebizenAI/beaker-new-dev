@@ -6,10 +6,10 @@
  * for semantic querying and to IPFS for persistent, decentralized storage.
  */
 
-// const quadstoreService = require('./quadstore');
-// const ipfsService = require('./ipfs');
-// const { DataFactory } = require('n3');
-// const { namedNode, literal, quad } = DataFactory;
+const quadstoreService = require('./quadstore');
+const ipfsService = require('./ipfs');
+const { DataFactory } = require('n3');
+const { namedNode, literal, quad } = DataFactory;
 
 class LoggingService {
   constructor() {
@@ -66,6 +66,8 @@ class LoggingService {
     console.log('Exporting log to Quadstore...');
     // In a real implementation, this would convert the logEntry to RDF
     // and use the quadstoreService to save it.
+    const rdfData = this.convertLogEntryToRDF(logEntry);
+    await quadstoreService.saveRDF(rdfData);
   }
 
   /**
@@ -75,6 +77,30 @@ class LoggingService {
   async exportToIpfs(logEntry) {
     console.log('Exporting log to IPFS...');
     // In a real implementation, this would use the ipfsService to add the log.
+    const ipfsHash = await ipfsService.addLogEntry(logEntry);
+    console.log(`Log exported to IPFS with hash: ${ipfsHash}`);
+  }
+
+  /**
+   * Converts a log entry to RDF format.
+   * @param {object} logEntry - The log entry object.
+   * @returns {string} - The RDF data as a string.
+   */
+  convertLogEntryToRDF(logEntry) {
+    // Example conversion to RDF using N3 DataFactory
+    const { level, message, timestamp, ...details } = logEntry;
+    const triples = [
+      quad(namedNode(this.logNs + 'LogEntry' + Math.random()), namedNode(this.logNs + 'level'), literal(level)),
+      quad(namedNode(this.logNs + 'LogEntry' + Math.random()), namedNode(this.logNs + 'message'), literal(message)),
+      quad(namedNode(this.logNs + 'LogEntry' + Math.random()), namedNode(this.logNs + 'timestamp'), literal(timestamp)),
+    ];
+
+    // Add detail properties
+    for (const [key, value] of Object.entries(details)) {
+      triples.push(quad(namedNode(this.logNs + 'LogEntry' + Math.random()), namedNode(this.logNs + key), literal(value)));
+    }
+
+    return triples;
   }
 }
 

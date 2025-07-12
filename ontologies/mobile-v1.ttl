@@ -5,6 +5,7 @@
 @prefix webizen: <https://webizen.org/ns/v1#> .
 @prefix call: <https://webizen.org/ns/v1/call#> .
 @prefix adp: <https://webizen.org/ns/v1/adp#> .
+@prefix : <http://example.org/mobile#> .
 
 call: a owl:Ontology ;
     rdfs:label "Webizen Mobile Ontology" ;
@@ -15,6 +16,18 @@ call: a owl:Ontology ;
 call:Call a rdfs:Class ;
     rdfs:label "Call" ;
     rdfs:comment "Represents a communication call (e.g., WebRTC, phone)." .
+
+:Chat a rdfs:Class ;
+  rdfs:label "Chat" ;
+  rdfs:comment "Metadata for chat messages." ;
+
+:SMS a rdfs:Class ;
+  rdfs:label "SMS" ;
+  rdfs:comment "Metadata for SMS messages." ;
+
+:CallRecording a rdfs:Class ;
+  rdfs:label "Call Recording" ;
+  rdfs:comment "Metadata for recorded calls." .
 
 # --- Properties ---
 
@@ -29,3 +42,15 @@ call:verificationMethod a rdf:Property ;
     rdfs:comment "The method used for verification (e.g., 'ADP/WebID', 'None')." ;
     rdfs:domain call:Call ;
     rdfs:range xsd:string .
+
+:hasMessageContent a rdf:Property ;
+  rdfs:label "Message Content" ;
+  rdfs:comment "Content of the chat or SMS message." ;
+  rdfs:domain :Chat ;
+  rdfs:range xsd:string .
+
+:hasRecordingDuration a rdf:Property ;
+  rdfs:label "Recording Duration" ;
+  rdfs:comment "Duration of the call recording." ;
+  rdfs:domain :CallRecording ;
+  rdfs:range xsd:duration .

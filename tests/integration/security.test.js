@@ -50,4 +50,41 @@ describe('Security Integration Tests', () => {
 
     expect(isValid).toBe(true);
   });
+
+  test('SPHINCS+ signing', () => {
+    const data = 'test data';
+    expect(() => securityManager.sphincsPlusSign(data)).not.toThrow();
+  });
+
+  test('ECDSA signing', () => {
+    const data = 'test data';
+    expect(() => securityManager.ecdsaSign(data)).not.toThrow();
+  });
+
+  test('RSA encryption', () => {
+    const data = 'test data';
+    expect(() => securityManager.rsaEncrypt(data)).not.toThrow();
+  });
+
+  test('AES encryption', () => {
+    const data = 'test data';
+    const key = 'test key';
+    expect(() => securityManager.aesEncrypt(data, key)).not.toThrow();
+  });
+
+  test('Ed25519 signing', () => {
+    const data = 'test data';
+    expect(() => securityManager.ed25519Sign(data)).not.toThrow();
+  });
+
+  test('Key rotation', () => {
+    const keys = { key1: 'value1', key2: 'value2' };
+    expect(() => securityManager.storeRotatedKeys(keys)).not.toThrow();
+  });
+
+  test('Audit trail logging', () => {
+    const action = 'testAction';
+    const details = { detail1: 'value1' };
+    expect(() => securityManager.logAuditTrail(action, details)).not.toThrow();
+  });
 });

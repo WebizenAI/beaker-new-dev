@@ -1,11 +1,12 @@
 # Webizen v0.25
 
-Webizen is a humanitarian ICT proof-of-concept: a decentralized social-web browser refactored from Beaker Browser. It is delivered as a WebExtension, an Electron desktop app, and a React Native mobile app.
+Webizen is a humanitarian ICT proof-of-concept and a decentralized social-web browser, refactored and modernized from the original Beaker Browser. It is delivered as a cross-platform solution: a WebExtension, an Electron desktop app, and a React Native mobile app.
 
-This project aims to provide privacy-preserving, accessible, and decentralized social-web tools for social good.
+This project aims to provide privacy-preserving, accessible, and decentralized social-web tools for social good, integrating cutting-edge technologies to empower users with data sovereignty and enhanced communication capabilities.
 
 ## Table of Contents
 
+- [Core Features](#core-features)
 - [Project Structure](#project-structure)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
@@ -19,12 +20,27 @@ This project aims to provide privacy-preserving, accessible, and decentralized s
 - [Contributing](#contributing)
 - [License](#license)
 
+## Core Features
+
+- **Decentralized Identity**: Utilizes ADP (Authenticated Data Protocol) and WebID for decentralized identity and call verification.
+- **Native Crypto Wallet**: Integrates a native Cashtab wallet for eCash (XEC) and SLP token management, enabling micro-transactions and obligation cost tracking.
+- **Advanced Security**: A comprehensive security module implementing SPHINCS+, ECDSA, RSA, AES, and Ed25519 for robust data protection.
+- **P2P Communication**: Leverages WebTorrent, GUN.eco, and WebRTC for decentralized data transfer and real-time communication.
+- **Semantic Data**: Built on a foundation of RDF, Quadstore, and versioned ontologies for structured, interoperable data.
+- **AI-Powered Accessibility**: Features Chatterbox TTS for advanced, multilingual text-to-speech capabilities.
+- **Extensible API**: A secure, WebSocket-based Webizen API allows for modular extensions and integrations.
+- **Cross-Platform**: Delivered as an Electron desktop app, a WebExtension, and a React Native mobile app.
+
 ## Project Structure
 
 This repository uses a monorepo-like structure with two `package.json` files, which is inherited from the original Beaker Browser architecture:
 
 -   **`scripts/package.json`**: Contains development dependencies (`devDependencies`) and scripts for building, running, and testing the application. All development commands should be run from the `scripts/` directory.
 -   **`app/package.json`**: Contains application dependencies (`dependencies`) that will be packaged with the final builds (Electron, React Native).
+-   **`modules/`**: Core application logic, separated by feature (e.g., `access`, `security`, `cashtab`).
+-   **`services/`**: Shared services used across modules (e.g., `quadstore`, `crypto`, `webizen-api`).
+-   **`ontologies/`**: Versioned RDF schemas that define the application's data structures.
+-   **`platforms/`**: Platform-specific entry points and configurations for Electron and React Native.
 
 This separation is necessary because native Node.js modules need to be compiled against different runtimes: `devDependencies` against your local Node.js version, and `dependencies` against the Electron runtime.
 
@@ -76,7 +92,7 @@ npm start
 To build the WebExtension for loading into a browser:
 
 ```bash
-npm run build:webext
+npm run build
 ```
 *(Note: This script will be fully implemented in a later task. It will create a `dist/webext` directory.)*
 

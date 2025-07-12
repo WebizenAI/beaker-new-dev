@@ -1,22 +1,27 @@
 const appStoreManager = require('../../modules/appstore');
 
 describe('App Store Integration Tests', () => {
-  test('should discover apps successfully', () => {
-    const apps = appStoreManager.discoverApps();
-    expect(apps).toBeDefined();
-    expect(apps.length).toBeGreaterThan(0);
+  describe('discoverApps', () => {
+    it('should return a list of available apps', async () => {
+      const apps = await appStoreManager.discoverApps();
+      expect(apps).toBeInstanceOf(Array);
+      expect(apps.length).toBeGreaterThan(0);
+      expect(apps[0]).toHaveProperty('name');
+      expect(apps[0]).toHaveProperty('id');
+    });
   });
 
-  test('should install an app successfully', () => {
-    const appId = 'app_1';
+  describe('installApp', () => {
+    it('should install an app successfully', async () => {
+      const appId = 'test-app-id';
+      const result = await appStoreManager.installApp(appId);
+      expect(result).toBe(true);
+    });
 
-    const result = appStoreManager.installApp(appId);
-    expect(result).toBe(true);
-
-    const installedApps = appStoreManager.getInstalledApps();
-    expect(installedApps).toBeDefined();
-    expect(installedApps.length).toBeGreaterThan(0);
-    expect(installedApps[0].id).toBe(appId);
+    it('should throw an error for invalid app ID', async () => {
+      const invalidAppId = 'invalid-app-id';
+      await expect(appStoreManager.installApp(invalidAppId)).rejects.toThrow('App not found');
+    });
   });
 
   test('should retrieve installed apps successfully', () => {

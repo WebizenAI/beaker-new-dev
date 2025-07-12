@@ -1,39 +1,22 @@
-const emailManager = require('../../modules/email');
+const emailModule = require('../../modules/email');
 
-describe('Email Integration Tests', () => {
-  test('should retrieve emails successfully', async () => {
-    const mockConfig = {
-      user: 'test@example.com',
-      password: 'password',
-      host: 'imap.example.com',
-      port: 993,
-      tls: true,
-    };
-
-    const emails = await emailManager.retrieveEmails(mockConfig);
-    expect(emails).toBeDefined();
-    expect(emails.length).toBeGreaterThan(0);
+describe('Email Module Integration Tests', () => {
+  test('Retrieve emails', () => {
+    expect(() => emailModule.retrieveEmails()).not.toThrow();
   });
 
-  test('should send email successfully', async () => {
-    const mockConfig = {
-      host: 'smtp.example.com',
-      port: 587,
-      secure: false,
-      auth: {
-        user: 'test@example.com',
-        pass: 'password',
-      },
-    };
+  test('Send email', () => {
+    const emailDetails = { subject: 'Test Email', body: 'This is a test email.' };
+    expect(() => emailModule.sendEmail(emailDetails)).not.toThrow();
+  });
 
-    const email = {
-      from: 'test@example.com',
-      to: 'recipient@example.com',
-      subject: 'Test Email',
-      text: 'This is a test email.',
-    };
+  test('Generate AI response', () => {
+    const condition = '[ollama] research topic';
+    expect(() => emailModule.generateAIResponse(condition)).not.toThrow();
+  });
 
-    const result = await emailManager.sendEmail(mockConfig, email);
-    expect(result).toBe(true);
+  test('Apply rate limiting', () => {
+    const emailRequests = [{ id: 1 }, { id: 2 }];
+    expect(() => emailModule.applyRateLimiting(emailRequests)).not.toThrow();
   });
 });

@@ -34,13 +34,22 @@ Alternatively, you can gain access by providing a valid **SLP (Simple Ledger Pro
 3.  If a payment is required, it will be processed automatically.
 4.  The status panel will update to show "Access Granted" upon success.
 
-## 2. Obligation Cost Tracking
+## 2. Cashtab Wallet Setup
+
+- Initialize Cashtab wallet for obligation cost tracking.
+
+## 3. Obligation Cost Tracking
 
 Webizen tracks the cost of using certain third-party services or computationally intensive features (like premium AI models or TTS services).
 
 -   **How it works**: As you use these services, the associated costs are logged as "obligation costs."
 -   **Viewing Costs**: The total obligation cost paid is displayed in the status section of the Access Control panel. A detailed history will be available in a future update.
 -   **Obligation-Free Derivatives**: The goal of this system is to cover the operational costs of the platform. Once the collective obligation costs are met, future use of the platform and any derivative works can become obligation-free.
+
+### Configuration Steps
+
+- Configure Quadstore for storing obligation cost details.
+- Enable SPHINCS+ signatures for audit trail.
 
 ## Security Setup
 
@@ -52,6 +61,69 @@ Webizen tracks the cost of using certain third-party services or computationally
 
 ### Key Rotation
 - Key rotation is supported for SPHINCS+ and ECDSA keys.
+- Configure Quadstore for storing rotated keys securely.
 
 ### Audit Logs
 - All key usage and signature verifications are logged in Quadstore for security auditing.
+- Enable audit trail logging with SPHINCS+ signatures.
+
+## Cryptographic Libraries Setup
+- Install SPHINCS+, ECDSA, RSA, AES, and Ed25519 libraries.
+
+## Quadstore Setup
+- Install Quadstore and configure persistent RDF storage.
+
+## IPFS Setup
+- Install IPFS and configure for agreements and backups storage.
+
+## Cross-Platform Build Tools
+- Install `rimraf` and `cpx` for cross-platform compatibility in build scripts.
+
+## ADP/WebID Setup
+- Configure WebID validation using `@inrupt/solid-client-authn-browser`.
+- Store validation results in Quadstore.
+
+## WebRTC Call Verification
+- Enable WebRTC call verification using `react-native-webrtc`.
+- Configure notifications for call verification failures.
+
+## Calendar Module Setup
+- Configure event creation and scheduling using `modules/calendar/index.js`.
+- Integrate calendar with address book for attendees and work management for project events.
+- Use FullCalendar for React UI in `components/Calendar.js`.
+
+## Mobile App Setup
+
+### Features
+- Chat: Initialize using WebRTC and WebSockets.
+- SMS/MMS: Send messages using react-native-sms.
+- Call Recording: Record calls using react-native-callkeep.
+- AI Assistant: Integrate Ollama/Chatterbox via Tailscale.
+
+### Configuration
+- Ensure dependencies for React Native are installed.
+- Test offline support and voice input for AI assistant.
+
+## Email Module Setup
+
+### Features
+- Retrieve emails using IMAP.
+- Send emails using Nodemailer.
+- Generate AI-driven responses for specific conditions.
+- Apply rate limiting to email requests.
+
+### Configuration
+- Ensure IMAP and SMTP server details are correctly configured.
+- Test AI response generation and rate limiting functionality.
+
+## Complete Setup
+
+### Calendar Module
+- Configure event creation and scheduling.
+- Integrate with address book and work management.
+
+### Mobile App
+- Enable offline support and voice input for AI assistant.
+
+### WebExtension and Electron
+- Build and deploy using CI workflows.

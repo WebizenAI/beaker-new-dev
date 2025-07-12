@@ -129,6 +129,7 @@ const Access = () => {
   };
 
   const fetchObligationCostHistory = () => {
+    console.log('Fetching obligation cost history from Quadstore...');
     // Example: Fetch obligation cost history from Quadstore
     const history = [
       { id: 1, description: 'License for Chatterbox', cost: '100 XEC', date: '2025-07-01' },

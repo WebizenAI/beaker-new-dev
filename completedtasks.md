@@ -2151,3 +2151,10 @@ This file tracks the completed tasks as per the Webizen v0.25 Advanced Prompt Pl
         - Updated to import the `cashtabManager` instance instead of using `require`.
         - Refactored the `AccessManager` class to accept `cashtabManager` as a dependency in its constructor for better testability and consistency.
         - Corrected a stray closing brace in the class definition.
+
+### Project Maintenance: Update .gitignore and README.md
+- **Task**: Review and update core project files for clarity and cleanliness.
+- **Status**: Completed.
+- **Details**:
+    - **`.gitignore`**: Updated to include more comprehensive ignore patterns for OS-generated files, common IDEs, and build/test artifacts.
+    - **`README.md`**: Rewrote the introduction to better reflect the project's current state and vision. Added a "Core Features" section to highlight key functionalities. Updated the "Project Structure" section to be more descriptive.

@@ -7,6 +7,9 @@ const Mobile = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [message, setMessage] = useState('');
   const [domain, setDomain] = useState('');
+  const [chatMessages, setChatMessages] = useState([]);
+  const [smsStatus, setSmsStatus] = useState('');
+  const [callRecordingStatus, setCallRecordingStatus] = useState('');
 
   // Simulate an incoming call for demonstration purposes
   const simulateCall = (callerId) => {
@@ -40,9 +43,16 @@ const Mobile = () => {
   const handleSendSMS = () => {
     // Logic to send SMS
     console.log(`Sending SMS to ${phoneNumber}: ${message}`);
+    setSmsStatus('SMS sent successfully');
     // Reset fields after sending
     setPhoneNumber('');
     setMessage('');
+  };
+
+  const handleRecordCall = () => {
+    // Logic to record call
+    console.log(`Recording call for domain: ${domain}`);
+    setCallRecordingStatus('Call recorded successfully');
   };
 
   const handleVerifyCall = () => {
@@ -51,6 +61,16 @@ const Mobile = () => {
     mobileManager.verifyCall(domain).then(status => {
       setVerificationStatus(status);
     });
+  };
+
+  const notifyCallVerificationFailure = () => {
+    console.log('Call verification failed. Displaying notification...');
+    // Example: Use React Native Toast API for notifications
+  };
+
+  const enableVoiceInputForAI = () => {
+    console.log('Enabling voice input for AI assistant...');
+    // Example: Integrate voice input using Chatterbox
   };
 
   return (
@@ -117,6 +137,34 @@ const Mobile = () => {
             >
               Send SMS
             </button>
+            {smsStatus && <p className="mt-2">{smsStatus}</p>}
+          </div>
+
+          {/* Call Recording Section */}
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold mb-2">Call Recording</h2>
+            <button
+              onClick={handleRecordCall}
+              className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+            >
+              Record Call
+            </button>
+            {callRecordingStatus && <p className="mt-2">{callRecordingStatus}</p>}
+          </div>
+
+          {/* Chat Section */}
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold mb-2">Chat</h2>
+            <textarea
+              placeholder="Type your message..."
+              className="w-full p-2 border rounded mb-2"
+            ></textarea>
+            <button
+              onClick={() => setChatMessages([...chatMessages, 'New message'])}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Send Message
+            </button>
           </div>
 
           {/* Call Verification Section */}
@@ -143,3 +191,4 @@ const Mobile = () => {
 };
 
 export default Mobile;
+export { notifyCallVerificationFailure, enableVoiceInputForAI };

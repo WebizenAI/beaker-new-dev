@@ -27,6 +27,11 @@ const Email = () => {
     setBody('');
   };
 
+  function previewAIResponse(responseDetails) {
+    console.log('Previewing AI response:', responseDetails);
+    // Example: Render AI response preview in the UI
+  }
+
   return (
     <div role="main" aria-labelledby="email-section" className="p-4 border rounded">
       <h1 id="email-section" className="text-2xl font-bold mb-4">Email Management</h1>
@@ -91,3 +96,4 @@ const Email = () => {
 };
 
 export default Email;
+export { previewAIResponse };

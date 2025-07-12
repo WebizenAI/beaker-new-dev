@@ -5,10 +5,8 @@
  */
 
 import { promises as dns } from 'dns';
-// Placeholder for future WebID and Cashtab integration
-// import { webIdService } from '../services/webid.js';
-// import { cashtab } from '../modules/cashtab/index.js';
-// import { quadstore } from '../services/quadstore.js';
+import { validateWebID, storeValidationResults } from './webidValidation.js';
+import { quadstore } from '../../services/quadstore.js';
 
 const ADP_PREFIX = 'adp:hasEcashAccount=';
 const MAX_RETRIES = 3;
@@ -17,10 +15,6 @@ const INITIAL_BACKOFF_MS = 200;
 class AdpManager {
   constructor() {
     console.log('ADP Manager initialized');
-    // In a real implementation, we would inject these services.
-    // this.webIdService = webIdService;
-    // this.cashtab = cashtab;
-    // this.quadstore = quadstore;
   }
 
   /**
@@ -93,7 +87,15 @@ class AdpManager {
   async verifyWebID(webId, cashtabAddress) {
     try {
       console.log(`Verifying WebID: ${webId} with Cashtab address: ${cashtabAddress}`);
-      // Placeholder for actual verification logic
+      // Validate WebID using Solid Client Authn
+      const webIDValid = await validateWebID(webId);
+      if (!webIDValid) {
+        console.error(`WebID validation failed for ${webId}`);
+        return false;
+      }
+
+      // Store validation results in Quadstore
+      await storeValidationResults({ webId, cashtabAddress });
       return true;
     } catch (error) {
       console.error(`Failed to verify WebID ${webId}:`, error);

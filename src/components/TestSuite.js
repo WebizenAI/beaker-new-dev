@@ -27,6 +27,11 @@ const TestSuite = () => {
     }
   };
 
+  function displayCalendarTestResults(results) {
+    console.log('Displaying calendar test results:', results);
+    // Example: Render test results with ARIA attributes
+  }
+
   return (
     <div className="p-4 font-sans" role="main">
       <h1 className="text-2xl font-bold mb-4">Webizen Test Suite</h1>
@@ -74,3 +79,4 @@ const TestSuite = () => {
 };
 
 export default TestSuite;
+export { displayCalendarTestResults };

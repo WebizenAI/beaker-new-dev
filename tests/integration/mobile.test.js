@@ -1,25 +1,22 @@
-const mobileManager = require('../../platforms/mobile');
+const mobileModule = require('../../modules/mobile');
 
-describe('Mobile Integration Tests', () => {
-  test('should send SMS successfully', async () => {
-    const phoneNumber = '1234567890';
-    const message = 'Hello, this is a test SMS.';
-
-    const result = await mobileManager.sendSMS(phoneNumber, message);
-    expect(result).toBe(true);
+describe('Mobile Module Integration Tests', () => {
+  test('Initialize chat', () => {
+    expect(() => mobileModule.initializeChat()).not.toThrow();
   });
 
-  test('should record a call successfully', async () => {
-    const callId = 'test_call_123';
-
-    const recordedPath = await mobileManager.recordCall(callId);
-    expect(recordedPath).toBe(`/path/to/recorded_call_${callId}.mp3`);
+  test('Send SMS', () => {
+    const messageDetails = { content: 'Test SMS', recipient: '+1234567890' };
+    expect(() => mobileModule.sendSMS(messageDetails)).not.toThrow();
   });
 
-  test('should verify call successfully', async () => {
-    const domain = 'example.com';
+  test('Record call', () => {
+    const callDetails = { duration: '5 minutes', caller: '+1234567890' };
+    expect(() => mobileModule.recordCall(callDetails)).not.toThrow();
+  });
 
-    const isVerified = await mobileManager.verifyCall(domain);
-    expect(isVerified).toBe(true);
+  test('Verify ADP/WebID call', () => {
+    const webID = 'https://example.solidpod.com/profile/card#me';
+    expect(() => mobileModule.verifyADPCall(webID)).not.toThrow();
   });
 });

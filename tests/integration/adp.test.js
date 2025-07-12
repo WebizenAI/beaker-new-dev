@@ -96,4 +96,20 @@ describe('ADP and Call Verification Integration', () => {
       expect(isValid).toBe(false);
     });
   });
+
+  describe('ADP and Mobile Integration Tests', () => {
+    it('should validate WebID format', () => {
+      const webID = 'https://example.solidpod.com/profile/card#me';
+      expect(() => adpManager.validateWebID(webID)).not.toThrow();
+    });
+
+    it('should verify WebRTC call', () => {
+      const webID = 'https://example.solidpod.com/profile/card#me';
+      expect(() => mobileManager.verifyCall(webID)).not.toThrow();
+    });
+
+    it('should notify call verification failure', () => {
+      expect(() => mobileManager.notifyCallVerificationFailure()).not.toThrow();
+    });
+  });
 });

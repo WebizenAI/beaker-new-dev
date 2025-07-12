@@ -120,4 +120,20 @@ describe('AccessManager Integration Tests', () => {
       });
     });
   });
+
+  describe('Access Module Integration Tests', () => {
+    test('Track obligation cost', () => {
+      const costDetails = { id: 'cost1', amount: 100, description: 'Test cost' };
+      expect(() => AccessManager.trackObligationCost(costDetails)).not.toThrow();
+    });
+
+    test('SPHINCS+ signature in audit trail', () => {
+      const auditData = { id: 'audit1', details: 'Test audit' };
+      expect(() => AccessManager.addSPHINCSPlusSignatureToAuditTrail(auditData)).not.toThrow();
+    });
+
+    test('Fetch obligation cost history', () => {
+      expect(() => AccessManager.fetchObligationCostHistory()).not.toThrow();
+    });
+  });
 });
