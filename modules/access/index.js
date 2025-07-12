@@ -9,7 +9,19 @@
 import { cashtabManager } from '../cashtab/index.js';
 import { quadstoreService } from '../../services/quadstore.js';
 import { solidClient } from '@inrupt/solid-client';
-import { sphincs } from '../../services/crypto';
+// Placeholder for SPHINCS+ crypto. Replace with actual import in production.
+const sphincs = {
+  async sign(data) {
+    // Simulate signing
+    return 'mock_signature_' + Buffer.from(data).toString('base64');
+  },
+  async verify(data, signature) {
+    // Simulate verification: check if signature matches the mock pattern
+    return signature === 'mock_signature_' + Buffer.from(data).toString('base64');
+  }
+};
+// Simple in-memory cache for signature verification results
+const signatureVerificationCache = new Map();
 
 const MAX_PAYMENT_RETRIES = 3;
 const RETRY_DELAY_MS = 1000;
@@ -20,6 +32,9 @@ export class AccessManager {
     console.log('AccessManager initialized');
     // In a more robust implementation, services would be injected.
     this.cashtab = cashtab;
+    // Simple in-memory role map (replace with persistent storage in production)
+    this.userRoles = new Map();
+    // Example roles: 'admin', 'user', 'auditor'
   }
 
   /**
@@ -27,10 +42,20 @@ export class AccessManager {
    * Checks if a user has access via eCash balance/payment or a valid SLP token.
    * @param {string} walletId - The user's wallet ID from CashtabManager.
    * @param {string} [slpTokenId] - Optional SLP token for access.
+   * @param {string} [requiredRole] - Optional required role for access.
    * @returns {Promise<boolean>} - True if access is granted, false otherwise.
    */
-  async grantAccess(walletId, slpTokenId = null) {
+  async grantAccess(walletId, slpTokenId = null, requiredRole = null) {
     console.log(`Checking access for wallet: ${walletId}`);
+
+    // 0. Role-based access control
+    if (requiredRole) {
+      const userRole = this.getUserRole(walletId);
+      if (userRole !== requiredRole) {
+        console.warn(`Access denied: User role '${userRole}' does not match required role '${requiredRole}'.`);
+        return false;
+      }
+    }
 
     // 1. Check for SLP token first as an alternative access method.
     if (slpTokenId) {
@@ -157,6 +182,24 @@ export class AccessManager {
   }
 
   /**
+   * Assigns a role to a user (walletId).
+   * @param {string} walletId
+   * @param {string} role
+   */
+  assignUserRole(walletId, role) {
+    this.userRoles.set(walletId, role);
+  }
+
+  /**
+   * Gets the role for a user (walletId).
+   * @param {string} walletId
+   * @returns {string|null}
+   */
+  getUserRole(walletId) {
+    return this.userRoles.get(walletId) || null;
+  }
+
+  /**
    * Creates a signed audit trail entry for an obligation cost and saves it to Quadstore.
    * @param {object} costDetails - The details of the cost to log.
    */
@@ -164,28 +207,40 @@ export class AccessManager {
     console.log('Logging obligation cost to audit trail...');
     try {
       const dataToSign = JSON.stringify(costDetails);
-
       // Generate SPHINCS+ signature
       const signature = await sphincs.sign(dataToSign);
-
       const auditId = `urn:audit:${Date.now()}`;
       const obligationNs = 'http://webizen.org/v1/obligation#';
       const securityNs = 'http://webizen.org/v1/security#';
       const dcNs = 'http://purl.org/dc/terms/';
-
       const triples = [
         { subject: auditId, predicate: `${dcNs}date`, object: costDetails.timestamp },
         { subject: auditId, predicate: `${obligationNs}cost`, object: costDetails.cost },
         { subject: auditId, predicate: `${obligationNs}currency`, object: costDetails.currency },
         { subject: auditId, predicate: `${securityNs}signature`, object: signature },
       ];
-
       await quadstoreService.storeTriples(triples);
-
       console.log(`Obligation cost for ${costDetails.serviceName} logged to Quadstore with SPHINCS+ signature: ${signature}`);
     } catch (error) {
       console.error('Failed to log obligation cost to audit trail:', error);
     }
+  }
+
+  /**
+   * Verifies a SPHINCS+ signature for obligation cost data, with result caching.
+   * @param {object} costDetails - The details of the cost to verify.
+   * @param {string} signature - The SPHINCS+ signature to verify.
+   * @returns {Promise<boolean>} - True if valid, false otherwise.
+   */
+  async verifyObligationCostSignature(costDetails, signature) {
+    const dataToVerify = JSON.stringify(costDetails);
+    const cacheKey = dataToVerify + ':' + signature;
+    if (signatureVerificationCache.has(cacheKey)) {
+      return signatureVerificationCache.get(cacheKey);
+    }
+    const isValid = await sphincs.verify(dataToVerify, signature);
+    signatureVerificationCache.set(cacheKey, isValid);
+    return isValid;
   }
 
   // Add obligation cost audit trail

@@ -4,13 +4,14 @@
   "description": "Scripts for building and developing Webizen.",
   "author": "MediaProphet",
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
   },
   "scripts": {
     "start": "electron ../app",
     "watch": "vite",
     "rebuild": "electron-rebuild",
-    "burnthemall": "rm -rf node_modules ../app/node_modules && npm install && npm run rebuild",
+    "burnthemall": "rimraf node_modules ../app/node_modules && npm install && npm run rebuild",
     "test": "jest",
     "build:webext": "vite build --outDir dist/webext && cp public/* dist/webext/",
     "build:electron": "electron-builder",

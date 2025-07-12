@@ -66,23 +66,32 @@ class LoggingService {
    * Converts a JSON log entry to RDF triples and saves it to Quadstore.
    * @param {object} logEntry - The log entry object.
    */
+
   async exportToQuadstore(logEntry) {
     console.log('Exporting log to Quadstore...');
-    // In a real implementation, this would convert the logEntry to RDF
-    // and use the quadstoreService to save it.
+    // Convert logEntry to RDF and store using quadstoreService
     const rdfData = this.convertLogEntryToRDF(logEntry);
-    await quadstoreService.saveRDF(rdfData);
+    await quadstoreService.storeRDFData(rdfData);
   }
 
   /**
    * Saves the raw log entry to IPFS.
    * @param {object} logEntry - The log entry object.
    */
+
   async exportToIpfs(logEntry) {
     console.log('Exporting log to IPFS...');
-    // In a real implementation, this would use the ipfsService to add the log.
-    const ipfsHash = await ipfsService.addLogEntry(logEntry);
-    console.log(`Log exported to IPFS with hash: ${ipfsHash}`);
+    // Store logEntry in IPFS using ipfsService
+    if (ipfsService.storeBackup) {
+      const ipfsHash = await ipfsService.storeBackup(JSON.stringify(logEntry));
+      console.log(`Log exported to IPFS with hash: ${ipfsHash}`);
+    } else {
+      console.warn('ipfsService.storeBackup not available. Skipping IPFS log export.');
+    }
+  }
+  // Placeholder for log rotation (to be implemented)
+  rotateLogs() {
+    console.log('Log rotation not yet implemented.');
   }
 
   /**

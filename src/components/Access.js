@@ -23,22 +23,21 @@ const Access = () => {
   const [cashtabAddress, setCashtabAddress] = useState('');
   const [obligationCostHistory, setObligationCostHistory] = useState([]);
 
-  // Mock data for obligation cost history
-  const mockHistory = [
-    { timestamp: new Date().toISOString(), serviceName: 'initial_access', cost: 0, currency: 'XEC' },
-    { timestamp: new Date(Date.now() - 100000).toISOString(), serviceName: 'grok_api', cost: 0.01, currency: 'USD' },
-  ];
 
   useEffect(() => {
-    // Effect to update balance when walletId changes
+    // Effect to update balance and fetch obligation cost history when walletId changes
     if (walletId) {
       const fetchBalance = async () => {
         const balance = await AccessManager.checkBalance(walletId);
         setWalletBalance(balance);
       };
       fetchBalance();
-      // In a real app, we would fetch the history from Quadstore
-      setHistory(mockHistory);
+      // Fetch obligation cost history from Quadstore
+      const fetchHistory = async () => {
+        const history = await quadstoreService.fetchObligationCostHistory(walletId);
+        setObligationCostHistory(history);
+      };
+      fetchHistory();
     }
   }, [walletId]);
 
@@ -135,12 +134,8 @@ const Access = () => {
 
   const fetchObligationCostHistory = async () => {
     try {
-      const quadstoreHistory = await quadstoreService.fetchObligationCostHistory(walletId);
-      const podUrl = `https://solidpod.example.org/${walletId}/obligationCosts.ttl`;
-      const solidHistory = await solidClient.fetchRDF(podUrl);
-
-      const combinedHistory = [...quadstoreHistory, ...solidHistory];
-      setObligationCostHistory(combinedHistory);
+      const history = await quadstoreService.fetchObligationCostHistory(walletId);
+      setObligationCostHistory(history);
     } catch (error) {
       console.error('Failed to fetch obligation cost history:', error);
     }

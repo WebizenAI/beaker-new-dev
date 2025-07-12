@@ -20,8 +20,10 @@ const logging = require('./logging');
 
 // const security = require('../modules/security'); // Placeholder for the security module
 // const logger = require('./logging'); // Placeholder for the logging service
-// const quadstoreService = require('./quadstore'); // Placeholder for health check
-// const ipfsService = require('./ipfs'); // Placeholder for health check
+const quadstoreService = require('./quadstore');
+const ipfsService = require('./ipfs');
+const webtorrentService = require('./webtorrent');
+const solidosService = require('./solidos');
 
 const RATE_LIMIT_WINDOW_MS = 60000; // 1 minute
 const RATE_LIMIT_MAX_REQUESTS = 100; // 100 requests per minute

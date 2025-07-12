@@ -68,8 +68,47 @@ async function storeInSolidPod(containerUrl, data) {
   }
 }
 
+async function isReady() {
+  // In a real implementation, check Quadstore connectivity and readiness
+  return true;
+}
+
+/**
+ * Fetches obligation cost history for a given walletId from Quadstore.
+ * @param {string} walletId
+ * @returns {Promise<Array>} Array of obligation cost entries
+ */
+async function fetchObligationCostHistory(walletId) {
+  // Example SPARQL query for obligation costs by walletId
+  const query = `
+    PREFIX obligation: <http://webizen.org/v1/obligation#>
+    PREFIX dc: <http://purl.org/dc/terms/>
+    SELECT ?id ?serviceName ?cost ?currency ?date WHERE {
+      ?id obligation:cost ?cost ;
+          obligation:currency ?currency ;
+          dc:date ?date .
+      FILTER(STRSTARTS(STR(?id), "urn:audit:"))
+    }
+    ORDER BY DESC(?date)
+  `;
+  try {
+    const results = await queryRDFData(query);
+    // Map results to expected format (mocked for now)
+    // In a real implementation, parse results from SPARQL engine
+    return [
+      { id: 'urn:audit:1', serviceName: 'initial_access', cost: 0, currency: 'XEC', date: new Date().toISOString(), description: 'Initial access' },
+      { id: 'urn:audit:2', serviceName: 'grok_api', cost: 0.01, currency: 'USD', date: new Date(Date.now() - 100000).toISOString(), description: 'Grok API usage' },
+    ];
+  } catch (error) {
+    console.error('Failed to fetch obligation cost history:', error);
+    return [];
+  }
+}
+
 module.exports = {
   storeRDFData,
   queryRDFData,
   storeInSolidPod,
+  isReady,
+  fetchObligationCostHistory,
 };

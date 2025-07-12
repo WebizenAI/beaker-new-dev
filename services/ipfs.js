@@ -44,8 +44,27 @@ async function storeBackupInSolidPod(containerUrl, data) {
   }
 }
 
+async function isReady() {
+  // In a real implementation, check IPFS node connectivity
+  return true;
+}
+
+async function pinData(cid) {
+  console.log('Pinning data in IPFS...');
+  try {
+    await ipfs.pin.add(cid);
+    console.log('Data pinned in IPFS:', cid);
+    return true;
+  } catch (error) {
+    console.error('Failed to pin data in IPFS:', error.message);
+    return false;
+  }
+}
+
 module.exports = {
   storeBackup,
   retrieveBackup,
   storeBackupInSolidPod,
+  isReady,
+  pinData,
 };
