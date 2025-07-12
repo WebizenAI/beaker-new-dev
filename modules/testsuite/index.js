@@ -19,6 +19,9 @@ const integrationSecurityTests = require('../../tests/integration/security.test'
 const calendarTests = require('../../tests/integration/calendar.test');
 const mobileTests = require('../../tests/integration/mobile.test');
 const emailTests = require('../../tests/integration/email.test');
+const settingsTests = require('../../tests/integration/settings.test');
+const editorTests = require('../../tests/integration/editor.test');
+const i18nTests = require('../../tests/integration/i18n.test');
 
 class TestSuite {
   constructor() {
@@ -219,6 +222,24 @@ class TestSuite {
       }
     }));
 
+    this.tests.push(() => this.runTest('Access: Track obligation cost and audit trail', async () => {
+      const walletId = CashtabManager.createWallet({ name: 'Obligation Cost Audit Test Wallet' });
+      const serviceName = 'test_service';
+      const cost = 0.01;
+
+      await AccessManager.trackObligationCost(walletId, serviceName, cost);
+
+      const obligationCosts = AccessManager.obligationCosts;
+      if (!obligationCosts.some(costEntry => costEntry.walletId === walletId && costEntry.serviceName === serviceName)) {
+        throw new Error('Obligation cost tracking failed.');
+      }
+
+      const auditLogs = AccessManager.getAuditLogs(walletId);
+      if (!auditLogs.some(log => log.walletId === walletId && log.serviceName === serviceName)) {
+        throw new Error('Audit trail logging failed.');
+      }
+    }));
+
     // --- Security Tests ---
     this.tests.push(() => this.runTest('Security: SPHINCS+ Signing and Verification', async () => {
       const data = 'test_data';
@@ -341,6 +362,34 @@ class TestSuite {
       peerConnection2.close();
     }));
 
+    this.tests.push(() => this.runTest('WebID: Validate WebID and Cashtab address', async () => {
+      const webID = 'https://example.solidpod.com/profile/card#me';
+      const cashtabAddress = 'ecash123';
+
+      const isValid = await AccessManager.verifyWebID(webID, cashtabAddress);
+      if (!isValid) {
+        throw new Error('WebID validation failed for valid WebID and Cashtab address.');
+      }
+    }));
+
+    this.tests.push(() => this.runTest('WebRTC: Verify call from ADP-enabled domain', async () => {
+      const domain = 'verified-caller.com';
+
+      const result = await AccessManager.verifyCall(domain);
+      if (!result.verified) {
+        throw new Error('WebRTC call verification failed for ADP-enabled domain.');
+      }
+    }));
+
+    this.tests.push(() => this.runTest('WebRTC: Handle call verification failure for invalid caller ID', async () => {
+      const invalidCallerID = 'invalid-caller-id';
+
+      const result = await AccessManager.verifyCall(invalidCallerID);
+      if (result.verified) {
+        throw new Error('WebRTC call verification unexpectedly succeeded for invalid caller ID.');
+      }
+    }));
+
     // --- Key Rotation and Audit Logging Tests ---
     this.tests.push(() => this.runTest('Security: Key Rotation', async () => {
       const originalKey = await securityManager.getCurrentKey();
@@ -369,6 +418,122 @@ class TestSuite {
 
       if (!obligationCosts.some(costEntry => costEntry.walletId === walletId && costEntry.serviceName === serviceName)) {
         throw new Error('Obligation cost tracking failed.');
+      }
+    }));
+
+    this.tests.push(() => this.runTest('Security: Key Rotation Failure Handling', async () => {
+      jest.spyOn(securityManager, 'rotateKey').mockImplementation(() => {
+        throw new Error('Key rotation failed');
+      });
+
+      await expect(securityManager.rotateKey()).rejects.toThrow('Key rotation failed');
+    }));
+
+    this.tests.push(() => this.runTest('Security: Audit Logging with SolidOS Unavailability', async () => {
+      jest.spyOn(securityManager, 'logAuditTrail').mockImplementation(() => {
+        throw new Error('SolidOS pod unavailable');
+      });
+
+      const walletId = CashtabManager.createWallet({ name: 'Audit Log Test Wallet' });
+      const serviceName = 'test_service';
+      const action = 'test_action';
+
+      await expect(securityManager.logAuditTrail(walletId, serviceName, action)).rejects.toThrow('SolidOS pod unavailable');
+    }));
+
+    // --- Calendar Tests ---
+    this.tests.push(() => this.runTest('Calendar: Issue VC Invite', async () => {
+      const eventDetails = {
+        title: 'Team Meeting',
+        date: '2025-07-15T10:00:00Z',
+        attendees: ['https://example.solidpod.com/profile/card#me'],
+      };
+
+      const vcInvite = await calendarTests.issueVCInvite(eventDetails);
+
+      if (!vcInvite || !vcInvite.proof) {
+        throw new Error('VC invite issuance failed.');
+      }
+    }));
+
+    // --- Gitmark Tests ---
+    this.tests.push(() => this.runTest('Gitmark: Commit marking on GitHub', async () => {
+      const response = await markCommit('github', 'abc123', {
+        owner: 'testOwner',
+        repo: 'testRepo',
+        comment: 'Test commit mark',
+      });
+      if (!response || !response.data.body.includes('Test commit mark')) {
+        throw new Error('GitHub commit marking failed');
+      }
+    }));
+
+    this.tests.push(() => this.runTest('Gitmark: Commit marking on GitLab', async () => {
+      const response = await markCommit('gitlab', 'abc123', {
+        projectId: 'testProject',
+        comment: 'Test commit mark',
+      });
+      if (!response || !response.note.includes('Test commit mark')) {
+        throw new Error('GitLab commit marking failed');
+      }
+    }));
+
+    this.tests.push(() => this.runTest('Gitmark: Blockchain integration for eCash transactions', async () => {
+      const signedTransaction = await integrateCashtab({
+        to: 'testAddress',
+        amount: 100,
+      }, 'testPrivateKey');
+      if (!signedTransaction) {
+        throw new Error('Blockchain integration for eCash transactions failed');
+      }
+    }));
+
+    this.tests.push(() => this.runTest('Gitmark: OAuth authentication with SolidOS', async () => {
+      const session = await authenticateSolidOS();
+      if (!session || !session.isLoggedIn) {
+        throw new Error('OAuth authentication with SolidOS failed');
+      }
+    }));
+
+    // --- Settings Tests ---
+    this.tests.push(() => this.runTest('Settings: eCash claims with valid transaction details', async () => {
+      const transactionId = await settingsTests.integrateECashTransaction({ to: 'mockAddress', amount: 100 });
+      if (!transactionId) {
+        throw new Error('eCash claim failed for valid transaction details.');
+      }
+    }));
+
+    this.tests.push(() => this.runTest('Settings: Donation token/VC issuance with valid details', async () => {
+      const vc = await settingsTests.issueVerifiableCredential({ credentialSubject: { id: 'mockSubject', name: 'Mock Credential' } });
+      if (!vc) {
+        throw new Error('VC issuance failed for valid details.');
+      }
+    }));
+
+    this.tests.push(() => this.runTest('Settings: Theme switching with valid theme', async () => {
+      settingsTests.enableMultiLingualSupport('dark');
+      if (settingsTests.i18next.language !== 'dark') {
+        throw new Error('Theme switching failed for valid theme.');
+      }
+    }));
+
+    // --- Editor Tests ---
+    this.tests.push(() => this.runTest('Editor: Code editing and diagnostics', async () => {
+      await editorTests();
+    }));
+
+    // --- i18n Tests ---
+    this.tests.push(() => this.runTest('i18n: Language switching', async () => {
+      const result = await i18nTests.testLanguageSwitching();
+      if (!result.success) {
+        throw new Error('Language switching test failed.');
+      }
+    }));
+
+    this.tests.push(() => this.runTest('i18n: Translation accuracy', async () => {
+      const result = await i18nTests.testTranslationAccuracy();
+      if (!result.success) {
+        throw new Error('Translation accuracy test failed.');
       }
     }));
   }
@@ -413,6 +578,16 @@ class TestSuite {
   runEmailTests() {
     console.log('Running email module tests...');
     emailTests();
+  }
+
+  runSettingsTests() {
+    console.log('Running settings module tests...');
+    settingsTests();
+  }
+
+  runEditorTests() {
+    console.log('Running editor module tests...');
+    editorTests();
   }
 }
 

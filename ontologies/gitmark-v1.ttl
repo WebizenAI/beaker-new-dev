@@ -1,0 +1,41 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix gitmark: <http://example.org/gitmark#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix solid: <http://www.w3.org/ns/solid/terms#> .
+
+# Gitmark Metadata Ontology
+
+gitmark:Commit a rdf:Class ;
+    rdfs:label "Commit" ;
+    rdfs:comment "Represents a commit in a version control system." .
+
+gitmark:commitHash a rdf:Property ;
+    rdfs:label "Commit Hash" ;
+    rdfs:comment "The hash of the commit." ;
+    rdfs:domain gitmark:Commit ;
+    rdfs:range rdfs:Literal .
+
+gitmark:blockchainTx a rdf:Property ;
+    rdfs:label "Blockchain Transaction" ;
+    rdfs:comment "The blockchain transaction associated with the commit." ;
+    rdfs:domain gitmark:Commit ;
+    rdfs:range rdfs:Literal .
+
+gitmark:platform a rdf:Property ;
+    rdfs:label "Platform" ;
+    rdfs:comment "The platform where the commit is hosted (e.g., GitHub, GitLab)." ;
+    rdfs:domain gitmark:Commit ;
+    rdfs:range rdfs:Literal .
+
+gitmark:calendarEvent a rdf:Property ;
+    rdfs:label "Calendar Event" ;
+    rdfs:comment "The calendar event associated with the commit." ;
+    rdfs:domain gitmark:Commit ;
+    rdfs:range rdfs:Resource .
+
+gitmark:workItem a rdf:Property ;
+    rdfs:label "Work Item" ;
+    rdfs:comment "The work item associated with the commit." ;
+    rdfs:domain gitmark:Commit ;
+    rdfs:range rdfs:Resource .

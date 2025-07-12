@@ -68,12 +68,9 @@ export class CashtabManager {
    * @returns {Promise<boolean>} True if the token is valid.
    */
   async validateSLPToken(tokenId) {
-    // Implementation for validating an SLP token against a trusted source
-    // or by checking its genesis transaction on the blockchain.
     console.log(`Validating SLP token: ${tokenId}`);
     try {
-      // Placeholder for actual validation logic via a Chronik indexer or similar.
-      const isValid = true; // Assume valid for this skeleton.
+      const isValid = await walletLib.validateToken(tokenId);
       if (!isValid) {
         throw new Error('Invalid SLP token');
       }
@@ -93,16 +90,12 @@ export class CashtabManager {
   async createAndSignTransaction(transactionDetails, privateKey) {
     console.log('Creating and signing transaction:', transactionDetails);
     try {
-      // 1. Construct the transaction based on details.
-      const unsignedTx = `unsigned_tx_for_${transactionDetails.amount}_to_${transactionDetails.to}`;
-
-      // 2. Sign the transaction hash with the private key using the SecurityManager.
-      const signedTx = await securityManager.signWithEcdsa(unsignedTx, privateKey);
+      const unsignedTx = walletLib.createTransaction(transactionDetails);
+      const signedTx = await walletLib.signTransaction(unsignedTx, privateKey);
       console.log('Transaction signed successfully.');
       return signedTx;
     } catch (error) {
       console.error('Transaction creation/signing failed:', error.message);
-      // Error handling for failed transactions as requested by the prompt.
       throw new Error(`Transaction failed: ${error.message}`);
     }
   }
@@ -128,8 +121,8 @@ export class CashtabManager {
    * Handles network failure gracefully.
    */
   handleNetworkFailure() {
-    // Example: Handle network failure gracefully
     console.log('Network failure detected. Retrying...');
+    walletLib.retryNetworkOperation();
   }
 }
 

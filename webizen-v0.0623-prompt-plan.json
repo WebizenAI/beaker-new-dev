@@ -1,0 +1,726 @@
+{
+  "project": "Webizen v0.0623",
+  "repository": "github.com/WebizenAI/beaker-new-dev",
+  "objective": "Fix errors, add calendar, gitmark, settings, editor, i18n modules, integrate SolidOS, semantic tokens (SLP/VCs), OAuth, UI toolkits (pages-ui, work_ui), multi-lingual support, complete phases 5-11, enhance testing and documentation",
+  "global_rules": {
+    "write_status": "Append status to autonomous_build_status.json: {phase_id, prompt_id, status: 'completed' or 'failed', output_file, timestamp: '2025-07-12T22:38:00+10:00'}",
+    "log_errors": "If error, append to Autobot_errors.json: {phase_id, prompt_id, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:38:00+10:00'}"
+  },
+  "pre_task": {
+    "task": "Read autonomous_build_status.json to identify the next uncompleted task (first task with no status or 'failed'). If none, start with Phase 1, Prompt 1.",
+    "output": "Next task details (phase_id, prompt_id)",
+    "suggested_improvements": "Validate autonomous_build_status.json schema before reading to ensure data integrity."
+  },
+  "phases": [
+    {
+      "id": 1,
+      "name": "Fix Core Infrastructure",
+      "prompts": [
+        {
+          "id": 1,
+          "task": "Replace placeholder methods in modules/cashtab/index.js with @cashtab/wallet-lib for multi-sig wallets, eCash addresses, SLP tokens, ECDSA signatures. Add network failure handling.",
+          "output": "modules/cashtab/index.js",
+          "deps": ["Phase 1, Prompt 3"],
+          "suggested_improvements": "Add caching for wallet operations to improve performance."
+        },
+        {
+          "id": 2,
+          "task": "Update services/webizen-api.js for SPHINCS+/Ed25519/AES verification using sphincs, ed25519, CryptoJS. Add logging via services/logging.js.",
+          "output": "services/webizen-api.js",
+          "deps": ["Phase 1, Prompt 4", "Phase 1, Prompt 18"],
+          "suggested_improvements": "Implement rate limiting for API endpoints to prevent abuse."
+        },
+        {
+          "id": 3,
+          "task": "Update services/quadstore.js to use quadstore, quadstore-comunica for persistent RDF storage, replacing in-memory placeholders. Add SolidOS pod support via @inrupt/solid-client.",
+          "output": "services/quadstore.js",
+          "deps": ["Phase 1, Prompt 8"],
+          "suggested_improvements": "Optimize Quadstore queries for large datasets with indexing."
+        },
+        {
+          "id": 4,
+          "task": "Update services/ipfs.js to integrate ipfs-http-client for agreements, backups storage. Add SolidOS pod backup support.",
+          "output": "services/ipfs.js",
+          "deps": ["Phase 1, Prompt 8"],
+          "suggested_improvements": "Add IPFS pinning for critical data to ensure availability."
+        },
+        {
+          "id": 5,
+          "task": "Replace Unix-style commands in package.json build scripts with rimraf, cpx for cross-platform compatibility. Ensure Electron build supports Node.js 22 LTS with electron-builder, electron-forge.",
+          "output": "package.json",
+          "deps": ["Phase 1, Prompt 15"],
+          "suggested_improvements": "Add build script for generating localized Electron app packages."
+        },
+        {
+          "id": 6,
+          "task": "Enhance tests/integration/scalability.test.js to test Quadstore, SolidOS pods with persistent storage, Webizen API under 100ms network latency.",
+          "output": "tests/integration/scalability.test.js",
+          "deps": ["Phase 1, Prompt 16"],
+          "suggested_improvements": "Simulate high-latency networks to test robustness."
+        },
+        {
+          "id": 7,
+          "task": "Update services/webizen-api.js /health endpoint to check Quadstore, IPFS, WebTorrent, SolidOS availability.",
+          "output": "services/webizen-api.js",
+          "deps": ["Phase 1, Prompt 17"],
+          "suggested_improvements": "Add metrics for health check response times."
+        },
+        {
+          "id": 8,
+          "task": "Implement services/logging.js to export logs to Quadstore, IPFS, SolidOS pods using services/quadstore.js, services/ipfs.js, @inrupt/solid-client.",
+          "output": "services/logging.js",
+          "deps": ["Phase 1, Prompt 18"],
+          "suggested_improvements": "Add log rotation to manage storage size in SolidOS pods."
+        },
+        {
+          "id": 9,
+          "task": "Write E2E tests in tests/e2e/smoke.test.js for Webizen API workflows (module registration, resource loading, SolidOS pod access).",
+          "output": "tests/e2e/smoke.test.js",
+          "deps": ["Phase 1, Prompt 13"],
+          "suggested_improvements": "Add test cases for multi-lingual API responses."
+        },
+        {
+          "id": 10,
+          "task": "Update docs/post-installation.md with setup for Quadstore, IPFS, SolidOS, cross-platform build tools, Electron Node.js 22 LTS.",
+          "output": "docs/post-installation.md",
+          "deps": ["Phase 1, Prompt 14"],
+          "suggested_improvements": "Translate documentation into supported languages."
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Fix Access Control",
+      "prompts": [
+        {
+          "id": 1,
+          "task": "Update modules/access/index.js to implement trackObligationCost with Quadstore, SolidOS pod integration.",
+          "output": "modules/access/index.js",
+          "deps": ["Phase 2, Prompt 1", "Phase 1, Prompt 3"],
+          "suggested_improvements": "Add role-based access control for fine-grained permissions."
+        },
+        {
+          "id": 2,
+          "task": "Update modules/access/index.js for SPHINCS+ signatures in obligation cost audit trail using sphincs.",
+          "output": "modules/access/index.js",
+          "deps": ["Phase 2, Prompt 7", "Phase 4, Prompt 1"],
+          "suggested_improvements": "Optimize signature verification for low-latency access."
+        },
+        {
+          "id": 3,
+          "task": "Enhance components/Access.js to fetch/display obligation cost history from Quadstore, SolidOS pods, with i18next for multi-lingual support.",
+          "output": "components/Access.js",
+          "deps": ["Phase 2, Prompt 8", "Phase 2, Prompt 1", "Phase 11, Prompt 1"],
+          "suggested_improvements": "Add export feature for obligation cost history in RDF/JSON."
+        },
+        {
+          "id": 4,
+          "task": "Write integration tests in tests/integration/access.test.js for obligation cost tracking, audit trail with edge cases (Quadstore, SolidOS unavailable).",
+          "output": "tests/integration/access.test.js",
+          "deps": ["Phase 2, Prompt 4"],
+          "suggested_improvements": "Test access control with multi-lingual error messages."
+        },
+        {
+          "id": 5,
+          "task": "Update modules/testsuite/index.js to test obligation cost tracking, audit trail.",
+          "output": "modules/testsuite/index.js",
+          "deps": ["Phase 2, Prompt 5"],
+          "suggested_improvements": "Add automated test report generation in multiple languages."
+        },
+        {
+          "id": 6,
+          "task": "Update docs/post-installation.md with Cashtab wallet, obligation cost tracking setup.",
+          "output": "docs/post-installation.md",
+          "deps": ["Phase 2, Prompt 6"],
+          "suggested_improvements": "Include setup guides in supported languages."
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Fix ADP/Call Verification",
+      "prompts": [
+        {
+          "id": 1,
+          "task": "Update modules/adp/index.js to integrate WebID validation with @inrupt/solid-client-authn-browser, store results in Quadstore, SolidOS pods.",
+          "output": "modules/adp/index.js",
+          "deps": ["Phase 3, Prompt 1", "Phase 1, Prompt 3"],
+          "suggested_improvements": "Add multi-factor authentication for WebID validation."
+        },
+        {
+          "id": 2,
+          "task": "Update modules/mobile/index.js to implement WebRTC call verification using react-native-webrtc.",
+          "output": "modules/mobile/index.js",
+          "deps": ["Phase 3, Prompt 2"],
+          "suggested_improvements": "Support call verification in multiple languages."
+        },
+        {
+          "id": 3,
+          "task": "Enhance components/Mobile.js with notifications for call verification failures using React Native Toast API, i18next for multi-lingual support.",
+          "output": "components/Mobile.js",
+          "deps": ["Phase 3, Prompt 8", "Phase 11, Prompt 1"],
+          "suggested_improvements": "Add customizable notification styles via themes."
+        },
+        {
+          "id": 4,
+          "task": "Write integration tests in tests/integration/adp.test.js for WebID validation, WebRTC call verification with edge cases (invalid WebID, SolidOS pod unavailable).",
+          "output": "tests/integration/adp.test.js",
+          "deps": ["Phase 3, Prompt 5"],
+          "suggested_improvements": "Test multi-lingual error handling in WebID validation."
+        },
+        {
+          "id": 5,
+          "task": "Update modules/testsuite/index.js to test WebID validation, WebRTC call verification.",
+          "output": "modules/testsuite/index.js",
+          "deps": ["Phase 3, Prompt 6"],
+          "suggested_improvements": "Add test coverage for multilingual WebID error messages."
+        },
+        {
+          "id": 6,
+          "task": "Update docs/post-installation.md with ADP/WebID, WebRTC call verification, SolidOS setup.",
+          "output": "docs/post-installation.md",
+          "deps": ["Phase 3, Prompt 6"],
+          "suggested_improvements": "Translate setup instructions into supported languages."
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Fix Security",
+      "prompts": [
+        {
+          "id": 1,
+          "task": "Update modules/security/index.js to implement SPHINCS+ (sphincs), ECDSA (@cashtab/wallet-lib), RSA (node-rsa), AES (CryptoJS), Ed25519 (ed25519) for VCs and SLP tokens.",
+          "output": "modules/security/index.js",
+          "deps": ["Phase 4, Prompt 1"],
+          "suggested_improvements": "Add post-quantum cryptography support for future-proofing."
+        },
+        {
+          "id": 2,
+          "task": "Update modules/security/index.js to store rotated keys in Quadstore, SolidOS pods with SPHINCS+ signatures.",
+          "output": "modules/security/index.js",
+          "deps": ["Phase 4, Prompt 8", "Phase 1, Prompt 3"],
+          "suggested_improvements": "Implement key backup to IPFS for redundancy."
+        },
+        {
+          "id": 3,
+          "task": "Update modules/security/index.js for audit log storage in Quadstore, SolidOS pods with SPHINCS+ signatures.",
+          "output": "modules/security/index.js",
+          "deps": ["Phase 4, Prompt 9", "Phase 1, Prompt 3"],
+          "suggested_improvements": "Add tamper-detection for audit logs."
+        },
+        {
+          "id": 4,
+          "task": "Write integration tests in tests/integration/security.test.js for SPHINCS+, ECDSA, RSA, AES, Ed25519 with edge cases (key rotation failures, SolidOS pod unavailable).",
+          "output": "tests/integration/security.test.js",
+          "deps": ["Phase 4, Prompt 5"],
+          "suggested_improvements": "Test cryptographic operations with multi-lingual error messages."
+        },
+        {
+          "id": 5,
+          "task": "Update modules/testsuite/index.js to test key rotation, audit logging.",
+          "output": "modules/testsuite/index.js",
+          "deps": ["Phase 4, Prompt 6"],
+          "suggested_improvements": "Add performance benchmarks for key rotation."
+        },
+        {
+          "id": 6,
+          "task": "Update docs/post-installation.md with cryptographic libraries, key rotation, SolidOS setup, VC/SLP token issuance.",
+          "output": "docs/post-installation.md",
+          "deps": ["Phase 4, Prompt 7"],
+          "suggested_improvements": "Provide multilingual setup guides for security configurations."
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Calendar Module",
+      "prompts": [
+        {
+          "id": 1,
+          "task": "Implement modules/calendar/index.js for event creation, scheduling, reminders, integrated with xaitask for job scheduling, SolidOS pods for event storage, @digitalbazaar/vc for calendar invite VCs.",
+          "output": "modules/calendar/index.js",
+          "deps": ["Phase 1, Prompt 8"],
+          "suggested_improvements": "Add calendar export to iCal format."
+        },
+        {
+          "id": 2,
+          "task": "Create components/Calendar.js with React UI for event management using FullCalendar, ARIA attributes, SolidOS pod integration, pages-ui components, i18next for multi-lingual support.",
+          "output": "components/Calendar.js",
+          "deps": ["Phase 1, Prompt 1", "Phase 9, Prompt 2", "Phase 11, Prompt 1"],
+          "suggested_improvements": "Add drag-and-drop event rescheduling."
+        },
+        {
+          "id": 3,
+          "task": "Create ontologies/calendar-v1.ttl for event metadata, including VCs for invites, integrating with address book, work management, SolidOS RDF.",
+          "output": "ontologies/calendar-v1.ttl",
+          "deps": ["Phase 1, Prompt 9"],
+          "suggested_improvements": "Support schema.org for broader interoperability."
+        },
+        {
+          "id": 4,
+          "task": "Integrate modules/calendar with modules/addressbook for attendees, modules/work for project events, SolidOS pods for storage, VCs for invites.",
+          "output": "modules/calendar/index.js",
+          "deps": ["Phase 8, Prompt 2", "Phase 6, Prompt 1"],
+          "suggested_improvements": "Add attendee RSVP tracking via VCs."
+        },
+        {
+          "id": 5,
+          "task": "Write integration tests in tests/integration/calendar.test.js for event creation, scheduling, VC invites, integrations with edge cases (conflicting events, SolidOS pod unavailable).",
+          "output": "tests/integration/calendar.test.js",
+          "deps": ["Phase 1, Prompt 13"],
+          "suggested_improvements": "Test calendar UI in multiple languages."
+        },
+        {
+          "id": 6,
+          "task": "Update modules/testsuite/index.js to include calendar tests, including VC invite issuance.",
+          "output": "modules/testsuite/index.js",
+          "deps": ["Phase 1, Prompt 11"],
+          "suggested_improvements": "Add stress tests for high-volume event creation."
+        },
+        {
+          "id": 7,
+          "task": "Update components/TestSuite.js to display calendar test results with ARIA attributes, i18next for multi-lingual support.",
+          "output": "components/TestSuite.js",
+          "deps": ["Phase 1, Prompt 12", "Phase 11, Prompt 1"],
+          "suggested_improvements": "Add visual test result summaries."
+        },
+        {
+          "id": 8,
+          "task": "Document calendar module setup in docs/post-installation.md, including event creation, VC invites, integrations, SolidOS setup, multi-lingual support.",
+          "output": "docs/post-installation.md",
+          "deps": ["Phase 1, Prompt 14"],
+          "suggested_improvements": "Include examples in supported languages."
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Complete Remaining Features",
+      "prompts": [
+        {
+          "id": 1,
+          "task": "Implement modules/ai/chatterbox/index.js using Chatterbox for multilingual TTS with emotion control, include Python setup, support for Italian, Dutch, German, Spanish, French, Mandarin, Hindi, Japanese, Korean, Bengali, Tamil, Telugu, Portuguese, Quechua.",
+          "output": ["modules/ai/chatterbox/index.js", "chatterbox_setup.py"],
+          "deps": ["Phase 5, Prompt 1", "Phase 11, Prompt 1"],
+          "suggested_improvements": "Add real-time language detection for TTS."
+        },
+        {
+          "id": 2,
+          "task": "Optimize modules/ai/chatterbox/index.js for low-latency audio with caching.",
+          "output": "modules/ai/chatterbox/index.js",
+          "deps": ["Phase 5, Prompt 7"],
+          "suggested_improvements": "Cache audio in SolidOS pods for offline use."
+        },
+        {
+          "id": 3,
+          "task": "Implement modules/work/index.js for project management with Kanban/Gantt, peer reviews, GUN.eco collaboration, SolidOS pod storage, work_ui components.",
+          "output": "modules/work/index.js",
+          "deps": ["Phase 6, Prompt 1", "Phase 6, Prompt 9"],
+          "suggested_improvements": "Add multi-lingual project templates."
+        },
+        {
+          "id": 4,
+          "task": "Optimize modules/work/gantt.js for large projects (1,000+ tasks) with lazy loading, work_ui components.",
+          "output": "modules/work/gantt.js",
+          "deps": ["Phase 6, Prompt 10"],
+          "suggested_improvements": "Support Gantt chart export in multiple languages."
+        },
+        {
+          "id": 5,
+          "task": "Implement modules/hypermedia/index.js with SPARQL-MM for media processing, transcriptions, SolidOS pod storage.",
+          "output": "modules/hypermedia/index.js",
+          "deps": ["Phase 7, Prompt 1"],
+          "suggested_improvements": "Add multi-lingual transcription support."
+        },
+        {
+          "id": 6,
+          "task": "Optimize modules/hypermedia/index.js for large media datasets with Quadstore, SolidOS pod indexing.",
+          "output": "modules/hypermedia/index.js",
+          "deps": ["Phase 7, Prompt 7"],
+          "suggested_improvements": "Implement parallel processing for media indexing."
+        },
+        {
+          "id": 7,
+          "task": "Implement modules/mobile/index.js for chat, SMS/MMS, call recording, AI assistant with offline support, SolidOS pod storage, pages-ui components, i18next for multi-lingual support.",
+          "output": "modules/mobile/index.js",
+          "deps": ["Phase 8, Prompt 1", "Phase 8, Prompt 9", "Phase 11, Prompt 1"],
+          "suggested_improvements": "Add offline language translation for chat."
+        },
+        {
+          "id": 8,
+          "task": "Enhance components/Mobile.js with voice input for AI assistant via Chatterbox, pages-ui components, i18next for multi-lingual support.",
+          "output": "components/Mobile.js",
+          "deps": ["Phase 8, Prompt 10", "Phase 11, Prompt 1"],
+          "suggested_improvements": "Add gesture-based navigation for accessibility."
+        },
+        {
+          "id": 9,
+          "task": "Implement modules/email/index.js with IMAP-based email, AI-driven responses, rate limiting, SolidOS pod storage, pages-ui components, i18next for multi-lingual support.",
+          "output": "modules/email/index.js",
+          "deps": ["Phase 9, Prompt 1", "Phase 9, Prompt 7", "Phase 11, Prompt 1"],
+          "suggested_improvements": "Add email template localization."
+        },
+        {
+          "id": 10,
+          "task": "Enhance components/Email.js with AI response preview, pages-ui components, i18next for multi-lingual support.",
+          "output": "components/Email.js",
+          "deps": ["Phase 9, Prompt 8", "Phase 11, Prompt 1"],
+          "suggested_improvements": "Add auto-suggest for email subjects in multiple languages."
+        },
+        {
+          "id": 11,
+          "task": "Implement modules/library/index.js with SPARQL/vector-based search for large datasets, SolidOS pod storage.",
+          "output": "modules/library/index.js",
+          "deps": ["Phase 10, Prompt 24"],
+          "suggested_improvements": "Add multi-lingual search query support."
+        },
+        {
+          "id": 12,
+          "task": "Implement modules/appstore/index.js with recommendation engine using Chroma embeddings.",
+          "output": "modules/appstore/index.js",
+          "deps": ["Phase 10, Prompt 25"],
+          "suggested_improvements": "Localize app recommendations based on user language."
+        },
+        {
+          "id": 13,
+          "task": "Implement modules/ai/index.js with dynamic model switching, RAG query caching, SolidOS pod storage.",
+          "output": "modules/ai/index.js",
+          "deps": ["Phase 10, Prompt 26"],
+          "suggested_improvements": "Support multi-lingual RAG queries."
+        },
+        {
+          "id": 14,
+          "task": "Implement modules/backups/index.js with incremental backups to IPFS, SolidOS pods.",
+          "output": "modules/backups/index.js",
+          "deps": ["Phase 10, Prompt 27"],
+          "suggested_improvements": "Add backup metadata in RDF/JSON for languages."
+        },
+        {
+          "id": 15,
+          "task": "Enhance components/Timeline.js with interactive zoom, filter controls, SolidOS pod integration, pages-ui components, i18next for multi-lingual support.",
+          "output": "components/Timeline.js",
+          "deps": ["Phase 10, Prompt 28", "Phase 11, Prompt 1"],
+          "suggested_improvements": "Add timeline export in multiple languages."
+        },
+        {
+          "id": 16,
+          "task": "Implement remaining modules (bookmarks, media, solid, apps, translator, resources, parental) with SolidOS pod storage, pages-ui components, i18next for multi-lingual support.",
+          "output": "modules/*.js",
+          "deps": ["Phase 10, Prompts 1-21", "Phase 11, Prompt 1"],
+          "suggested_improvements": "Add accessibility-focused translations for parental controls."
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Testing and Documentation",
+      "prompts": [
+        {
+          "id": 1,
+          "task": "Write unit tests for new modules (calendar, chatterbox, work, hypermedia, mobile, email, library, appstore, ai, backups, timeline, gitmark, settings, editor, i18n) with edge cases, including VCs, SLP tokens, OAuth, multi-lingual support.",
+          "output": "tests/unit/*.test.js",
+          "deps": ["Phase 11, Prompt 1", "Phase 8, Prompt 1", "Phase 9, Prompt 1", "Phase 10, Prompt 1"],
+          "suggested_improvements": "Automate test localization for supported languages."
+        },
+        {
+          "id": 2,
+          "task": "Write integration tests for module interactions (calendar-work, AI-email, gitmark-cashtab, settings-cashtab, editor-gitmark, i18n-all) with performance metrics, VCs, SLP tokens, OAuth, multi-lingual support.",
+          "output": "tests/integration/*.test.js",
+          "deps": ["Phase 11, Prompt 2", "Phase 8, Prompt 4", "Phase 9, Prompt 4", "Phase 10, Prompt 4"],
+          "suggested_improvements": "Add cross-language integration test scenarios."
+        },
+        {
+          "id": 3,
+          "task": "Write E2E tests for workflows (calendar event creation, hypermedia transcription, email AI response, gitmark commit marking, settings eCash claims, editor code editing, VC/SLP issuance, i18n language switching).",
+          "output": "tests/e2e/*.test.js",
+          "deps": ["Phase 11, Prompt 3", "Phase 8, Prompt 1", "Phase 9, Prompt 1", "Phase 10, Prompt 1"],
+          "suggested_improvements": "Test E2E workflows in all supported languages."
+        },
+        {
+          "id": 4,
+          "task": "Test accessibility with NVDA, VoiceOver, JAWS for all components, including Calendar.js, Gitmark.js, Settings.js, Editor.js, i18n translations. Document in docs/accessibility-report.md.",
+          "output": "docs/accessibility-report.md",
+          "deps": ["Phase 11, Prompt 5", "Phase 8, Prompt 2", "Phase 9, Prompt 2", "Phase 10, Prompt 2"],
+          "suggested_improvements": "Add accessibility tests for right-to-left languages."
+        },
+        {
+          "id": 5,
+          "task": "Create docs/api.md documenting Webizen API endpoints, module extension guidelines, including gitmark, settings, editor, i18n endpoints, OAuth, VC/SLP token APIs.",
+          "output": "docs/api.md",
+          "deps": ["Phase 11, Prompt 7", "Phase 8, Prompt 1", "Phase 9, Prompt 1", "Phase 10, Prompt 1"],
+          "suggested_improvements": "Translate API documentation into supported languages."
+        },
+        {
+          "id": 6,
+          "task": "Create docs/troubleshooting.md with guides for Chatterbox GPU setup, mobile app crashes, calendar issues, gitmark setup, settings configuration, editor diagnostics, OAuth issues, i18n language issues.",
+          "output": "docs/troubleshooting.md",
+          "deps": ["Phase 11, Prompt 11", "Phase 8, Prompt 8", "Phase 9, Prompt 8", "Phase 10, Prompt 8"],
+          "suggested_improvements": "Add multilingual troubleshooting guides."
+        },
+        {
+          "id": 7,
+          "task": "Create .github/workflows/ci.yml for automated testing, deployment of WebExtension, Electron, mobile app, gitmark, settings, editor, i18n, with Electron Forge, electron-builder, OAuth tests.",
+          "output": ".github/workflows/ci.yml",
+          "deps": ["Phase 11, Prompt 12", "Phase 8, Prompt 1", "Phase 9, Prompt 1", "Phase 10, Prompt 1"],
+          "suggested_improvements": "Add CI pipeline for multi-lingual build testing."
+        },
+        {
+          "id": 8,
+          "task": "Update docs/post-installation.md with complete setup for all features, including calendar, gitmark, settings, editor, i18n modules, SolidOS, OAuth, VC/SLP token issuance, multi-lingual support.",
+          "output": "docs/post-installation.md",
+          "deps": ["Phase 11, Prompt 6", "Phase 8, Prompt 8", "Phase 9, Prompt 8", "Phase 10, Prompt 8"],
+          "suggested_improvements": "Include setup videos in supported languages."
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Gitmark Module",
+      "prompts": [
+        {
+          "id": 1,
+          "task": "Implement modules/gitmark/index.js to support git mark command for Git, GitHub, GitLab, Bitcoin, Bitcoin-ABC (eCash) using @octokit/rest, gitlab, @cashtab/wallet-lib. Add OAuth 2.0 for GitHub/GitLab using @inrupt/solid-client-authn-browser for WebID. Store commit marks in Quadstore, SolidOS pods. Integrate with Webizen API.",
+          "output": "modules/gitmark/index.js",
+          "deps": ["Phase 1, Prompt 1", "Phase 1, Prompt 3"],
+          "suggested_improvements": "Add support for additional Git platforms (e.g., Bitbucket)."
+        },
+        {
+          "id": 2,
+          "task": "Create components/Gitmark.js with React UI for managing git marks, using ARIA attributes, integrated with GitHub, GitLab, SolidOS pod APIs, pages-ui components, i18next for multi-lingual support.",
+          "output": "components/Gitmark.js",
+          "deps": ["Phase 1, Prompt 1", "Phase 9, Prompt 2", "Phase 11, Prompt 1"],
+          "suggested_improvements": "Add visual diff viewer for commits."
+        },
+        {
+          "id": 3,
+          "task": "Create ontologies/gitmark-v1.ttl for gitmark metadata, including commit hash, blockchain tx, platform (GitHub, GitLab), SolidOS RDF, integrated with calendar, work modules.",
+          "output": "ontologies/gitmark-v1.ttl",
+          "deps": ["Phase 1, Prompt 9", "Phase 5, Prompt 3"],
+          "suggested_improvements": "Add metadata for multi-lingual commit descriptions."
+        },
+        {
+          "id": 4,
+          "task": "Integrate modules/gitmark with modules/cashtab for eCash transactions, modules/work for project tracking, SolidOS pods for storage, using GitHub/GitLab APIs with OAuth.",
+          "output": "modules/gitmark/index.js",
+          "deps": ["Phase 1, Prompt 1", "Phase 6, Prompt 3"],
+          "suggested_improvements": "Add webhook support for real-time Git updates."
+        },
+        {
+          "id": 5,
+          "task": "Write integration tests in tests/integration/gitmark.test.js for git mark functionality across Git, GitHub, GitLab, Bitcoin, eCash with edge cases (invalid tx, API rate limits, SolidOS pod unavailable, OAuth failures).",
+          "output": "tests/integration/gitmark.test.js",
+          "deps": ["Phase 1, Prompt 13"],
+          "suggested_improvements": "Test OAuth token refresh scenarios."
+        },
+        {
+          "id": 6,
+          "task": "Update modules/testsuite/index.js to include gitmark tests for commit marking, blockchain integration, OAuth authentication.",
+          "output": "modules/testsuite/index.js",
+          "deps": ["Phase 1, Prompt 11"],
+          "suggested_improvements": "Add multi-lingual test result reporting."
+        },
+        {
+          "id": 7,
+          "task": "Update components/TestSuite.js to display gitmark test results with ARIA attributes, i18next for multi-lingual support.",
+          "output": "components/TestSuite.js",
+          "deps": ["Phase 1, Prompt 12", "Phase 11, Prompt 1"],
+          "suggested_improvements": "Add interactive test result filters."
+        },
+        {
+          "id": 8,
+          "task": "Document gitmark module setup in docs/post-installation.md, including Git, GitHub, GitLab, Bitcoin, eCash, SolidOS, OAuth integration, multi-lingual support.",
+          "output": "docs/post-installation.md",
+          "deps": ["Phase 1, Prompt 14"],
+          "suggested_improvements": "Include OAuth setup tutorials in multiple languages."
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Settings Module",
+      "prompts": [
+        {
+          "id": 1,
+          "task": "Implement modules/settings/index.js to manage eCash contributor claims using @cashtab/wallet-lib ECDSA signatures, issue SLP tokens for agreements/donations, VCs per W3C VC Data Model 2.0 using @digitalbazaar/vc for relationships/invites. Store in Quadstore, SolidOS pods. Integrate with Webizen API.",
+          "output": "modules/settings/index.js",
+          "deps": ["Phase 1, Prompt 1", "Phase 1, Prompt 3"],
+          "suggested_improvements": "Add VC revocation mechanism."
+        },
+        {
+          "id": 2,
+          "task": "Create components/Settings.js with React UI for eCash claims, donation token/VC management, theme selection (light/dark, pages-ui, work_ui) using Tailwind CSS, ARIA attributes, SolidOS pod integration, i18next for multi-lingual support.",
+          "output": "components/Settings.js",
+          "deps": ["Phase 1, Prompt 1", "Phase 11, Prompt 1"],
+          "suggested_improvements": "Add theme preview before applying."
+        },
+        {
+          "id": 3,
+          "task": "Create ontologies/settings-v1.ttl for settings metadata, including eCash claims, donation tokens, VCs, theme preferences, SolidOS RDF.",
+          "output": "ontologies/settings-v1.ttl",
+          "deps": ["Phase 1, Prompt 9"],
+          "suggested_improvements": "Add metadata for user-preferred languages."
+        },
+        {
+          "id": 4,
+          "task": "Integrate modules/settings with modules/cashtab for eCash transactions, modules/work for project tracking, SolidOS pods for storage, i18n for multi-lingual support.",
+          "output": "modules/settings/index.js",
+          "deps": ["Phase 1, Prompt 1", "Phase 6, Prompt 3", "Phase 11, Prompt 1"],
+          "suggested_improvements": "Add batch processing for multiple eCash claims."
+        },
+        {
+          "id": 5,
+          "task": "Write integration tests in tests/integration/settings.test.js for eCash claims, donation token/VC issuance, theme switching with edge cases (invalid signatures, SolidOS pod unavailable).",
+          "output": "tests/integration/settings.test.js",
+          "deps": ["Phase 1, Prompt 13"],
+          "suggested_improvements": "Test theme switching in multiple languages."
+        },
+        {
+          "id": 6,
+          "task": "Update modules/testsuite/index.js to include settings tests for eCash claims, token/VC issuance, theme management.",
+          "output": "modules/testsuite/index.js",
+          "deps": ["Phase 1, Prompt 11"],
+          "suggested_improvements": "Add performance tests for theme switching."
+        },
+        {
+          "id": 7,
+          "task": "Update components/TestSuite.js to display settings test results with ARIA attributes, i18next for multi-lingual support.",
+          "output": "components/TestSuite.js",
+          "deps": ["Phase 1, Prompt 12", "Phase 11, Prompt 1"],
+          "suggested_improvements": "Add exportable test reports in RDF/JSON."
+        },
+        {
+          "id": 8,
+          "task": "Document settings module setup in docs/post-installation.md, including eCash claims, token/VC issuance, theme management, SolidOS setup, multi-lingual support.",
+          "output": "docs/post-installation.md",
+          "deps": ["Phase 1, Prompt 14"],
+          "suggested_improvements": "Include multilingual setup examples."
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "name": "Editor Module",
+      "prompts": [
+        {
+          "id": 1,
+          "task": "Implement modules/editor/index.js using Monaco Editor for code editing, syntax highlighting, git integration, browser diagnostics via Electron webContents API, SolidOS pod storage.",
+          "output": "modules/editor/index.js",
+          "deps": ["Phase 1, Prompt 1", "Phase 1, Prompt 3"],
+          "suggested_improvements": "Add support for collaborative editing via GUN.eco."
+        },
+        {
+          "id": 2,
+          "task": "Create components/Editor.js with React UI for code editing, diagnostics display, using ARIA attributes, pages-ui components, i18next for multi-lingual support.",
+          "output": "components/Editor.js",
+          "deps": ["Phase 1, Prompt 1", "Phase 11, Prompt 1"],
+          "suggested_improvements": "Add code snippet sharing via VCs."
+        },
+        {
+          "id": 3,
+          "task": "Create ontologies/editor-v1.ttl for editor metadata, including file types, diagnostics, SolidOS RDF.",
+          "output": "ontologies/editor-v1.ttl",
+          "deps": ["Phase 1, Prompt 9"],
+          "suggested_improvements": "Add metadata for multi-lingual code comments."
+        },
+        {
+          "id": 4,
+          "task": "Integrate modules/editor with modules/gitmark for git operations, modules/settings for editor configurations, SolidOS pods for storage, i18n for multi-lingual support.",
+          "output": "modules/editor/index.js",
+          "deps": ["Phase 8, Prompt 1", "Phase 9, Prompt 1", "Phase 11, Prompt 1"],
+          "suggested_improvements": "Add auto-save to SolidOS pods."
+        },
+        {
+          "id": 5,
+          "task": "Write integration tests in tests/integration/editor.test.js for code editing, diagnostics, git integration with edge cases (invalid git commands, SolidOS pod unavailable).",
+          "output": "tests/integration/editor.test.js",
+          "deps": ["Phase 1, Prompt 13"],
+          "suggested_improvements": "Test editor in multiple languages."
+        },
+        {
+          "id": 6,
+          "task": "Update modules/testsuite/index.js to include editor tests for code editing, diagnostics, git integration.",
+          "output": "modules/testsuite/index.js",
+          "deps": ["Phase 1, Prompt 11"],
+          "suggested_improvements": "Add tests for large file editing."
+        },
+        {
+          "id": 7,
+          "task": "Update components/TestSuite.js to display editor test results with ARIA attributes, i18next for multi-lingual support.",
+          "output": "components/TestSuite.js",
+          "deps": ["Phase 1, Prompt 12", "Phase 11, Prompt 1"],
+          "suggested_improvements": "Add diagnostic visualizations in test results."
+        },
+        {
+          "id": 8,
+          "task": "Document editor module setup in docs/post-installation.md, including Monaco Editor, diagnostics, SolidOS setup, multi-lingual support.",
+          "output": "docs/post-installation.md",
+          "deps": ["Phase 1, Prompt 14"],
+          "suggested_improvements": "Include editor configuration examples in multiple languages."
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "name": "Internationalization Module",
+      "prompts": [
+        {
+          "id": 1,
+          "task": "Implement modules/i18n/index.js using i18next, i18next-http-backend for multi-lingual support (Italian, Dutch, German, Spanish, French, Mandarin, Hindi, Japanese, Korean, Bengali, Tamil, Telugu, Portuguese, Quechua). Store RDF/JSON language files in locales/*.jsonld, SolidOS pods via @inrupt/solid-client.",
+          "output": "modules/i18n/index.js",
+          "deps": ["Phase 1, Prompt 3"],
+          "suggested_improvements": "Add support for right-to-left languages (e.g., Arabic)."
+        },
+        {
+          "id": 2,
+          "task": "Create components/I18n.js with React UI for language selection, using ARIA attributes, pages-ui components, integrated with modules/settings.",
+          "output": "components/I18n.js",
+          "deps": ["Phase 9, Prompt 2"],
+          "suggested_improvements": "Add live language preview in UI."
+        },
+        {
+          "id": 3,
+          "task": "Create locales/en.jsonld, locales/it.jsonld, locales/nl.jsonld, locales/de.jsonld, locales/es.jsonld, locales/fr.jsonld, locales/zh.jsonld, locales/hi.jsonld, locales/ja.jsonld, locales/ko.jsonld, locales/bn.jsonld, locales/ta.jsonld, locales/te.jsonld, locales/pt.jsonld, locales/qu.jsonld in RDF/JSON format for translations.",
+          "output": "locales/*.jsonld",
+          "deps": ["Phase 11, Prompt 1"],
+          "suggested_improvements": "Add automated translation validation."
+        },
+        {
+          "id": 4,
+          "task": "Integrate modules/i18n with modules/calendar, modules/gitmark, modules/settings, modules/editor for multi-lingual UI, SolidOS pod storage.",
+          "output": "modules/i18n/index.js",
+          "deps": ["Phase 5, Prompt 1", "Phase 8, Prompt 1", "Phase 9, Prompt 1", "Phase 10, Prompt 1"],
+          "suggested_improvements": "Add dynamic language loading from SolidOS pods."
+        },
+        {
+          "id": 5,
+          "task": "Write integration tests in tests/integration/i18n.test.js for language switching, translation loading with edge cases (missing language files, SolidOS pod unavailable).",
+          "output": "tests/integration/i18n.test.js",
+          "deps": ["Phase 1, Prompt 13"],
+          "suggested_improvements": "Test fallback language handling."
+        },
+        {
+          "id": 6,
+          "task": "Update modules/testsuite/index.js to include i18n tests for language switching, translation accuracy.",
+          "output": "modules/testsuite/index.js",
+          "deps": ["Phase 1, Prompt 11"],
+          "suggested_improvements": "Add tests for translation performance."
+        },
+        {
+          "id": 7,
+          "task": "Update components/TestSuite.js to display i18n test results with ARIA attributes, i18next for multi-lingual support.",
+          "output": "components/TestSuite.js",
+          "deps": ["Phase 1, Prompt 12", "Phase 11, Prompt 1"],
+          "suggested_improvements": "Add multilingual test result summaries."
+        },
+        {
+          "id": 8,
+          "task": "Document i18n module setup in docs/post-installation.md, including language file setup, SolidOS integration, supported languages.",
+          "output": "docs/post-installation.md",
+          "deps": ["Phase 1, Prompt 14"],
+          "suggested_improvements": "Include translation contribution guidelines."
+        }
+      ]
+    }
+  ]
+}

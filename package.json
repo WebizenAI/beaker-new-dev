@@ -4,7 +4,7 @@
   "description": "Webizen project",
   "main": "index.js",
   "scripts": {
-    "build": "rimraf dist && cpx 'src/**/*' dist && echo 'Building project...'",
+    "build": "rimraf dist && cpx \"src/**/*\" dist && electron-builder && electron-forge make",
     "test": "jest"
   },
   "dependencies": {
@@ -15,6 +15,8 @@
   },
   "devDependencies": {
     "cpx": "^1.5.0",
+    "electron-builder": "^23.0.0",
+    "electron-forge": "^6.0.0",
     "jest": "^29.7.0",
     "rimraf": "^3.0.0"
   },

@@ -1,4 +1,8 @@
 import React, { useState } from 'react';
+import Chatterbox from 'chatterbox';
+import i18next from 'i18next';
+
+const aiAssistant = new Chatterbox();
 
 const Email = () => {
   const [emails, setEmails] = useState([]);
@@ -27,10 +31,16 @@ const Email = () => {
     setBody('');
   };
 
-  function previewAIResponse(responseDetails) {
-    console.log('Previewing AI response:', responseDetails);
-    // Example: Render AI response preview in the UI
-  }
+  const handleAIResponsePreview = async (emailContent) => {
+    try {
+      const response = await aiAssistant.processInput(emailContent);
+      console.log('AI-generated response:', response);
+      alert(i18next.t('aiResponsePreview', { response }));
+    } catch (error) {
+      console.error('Error generating AI response preview:', error);
+      alert(i18next.t('aiResponseError'));
+    }
+  };
 
   return (
     <div role="main" aria-labelledby="email-section" className="p-4 border rounded">
@@ -89,6 +99,21 @@ const Email = () => {
           className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
         >
           Send Email
+        </button>
+      </div>
+
+      {/* AI Response Preview Section */}
+      <div className="mb-6">
+        <h2 className="text-xl font-semibold mb-2">AI Response Preview</h2>
+        <textarea
+          placeholder="Enter email content for AI response"
+          className="w-full p-2 border rounded mb-2"
+        ></textarea>
+        <button
+          onClick={() => handleAIResponsePreview(body)}
+          className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600"
+        >
+          Generate AI Response
         </button>
       </div>
     </div>

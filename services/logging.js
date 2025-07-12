@@ -10,6 +10,7 @@ const quadstoreService = require('./quadstore');
 const ipfsService = require('./ipfs');
 const { DataFactory } = require('n3');
 const { namedNode, literal, quad } = DataFactory;
+const { getSolidDataset, saveSolidDatasetInContainer } = require('@inrupt/solid-client');
 
 class LoggingService {
   constructor() {
@@ -23,7 +24,7 @@ class LoggingService {
    * @param {string} level - The log level (e.g., 'info', 'warn', 'error').
    * @param {object} data - The log data, containing a message and any other relevant details.
    */
-  async log(level, data) {
+  async log(level, data, containerUrl) {
     const logEntry = {
       level,
       timestamp: new Date().toISOString(),
@@ -38,6 +39,9 @@ class LoggingService {
 
     // 3. Export to IPFS for persistence
     await this.exportToIpfs(logEntry);
+
+    // 4. Export to Solid Pod for decentralized storage
+    await this.exportToSolidPod(logEntry, containerUrl);
   }
 
   logToConsole(logEntry) {
@@ -79,6 +83,24 @@ class LoggingService {
     // In a real implementation, this would use the ipfsService to add the log.
     const ipfsHash = await ipfsService.addLogEntry(logEntry);
     console.log(`Log exported to IPFS with hash: ${ipfsHash}`);
+  }
+
+  /**
+   * Exports the log entry to a Solid Pod.
+   * @param {object} logEntry - The log entry object.
+   * @param {string} containerUrl - The URL of the Solid Pod container.
+   */
+  async exportToSolidPod(logEntry, containerUrl) {
+    console.log('Exporting log to Solid Pod...');
+    try {
+      const dataset = await getSolidDataset(containerUrl);
+      const updatedDataset = saveSolidDatasetInContainer(containerUrl, dataset);
+      console.log('Log exported to Solid Pod successfully.');
+      return updatedDataset;
+    } catch (error) {
+      console.error('Failed to export log to Solid Pod:', error.message);
+      throw error;
+    }
   }
 
   /**

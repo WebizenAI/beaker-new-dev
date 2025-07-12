@@ -1,0 +1,45 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix settings: <http://webizen.org/ontologies/settings-v1#> .
+
+settings:eCashClaim a rdfs:Class ;
+    rdfs:label "eCash Claim" ;
+    rdfs:comment "Represents an eCash claim for contributors." .
+
+settings:DonationToken a rdfs:Class ;
+    rdfs:label "Donation Token" ;
+    rdfs:comment "Represents a token issued for donations." .
+
+settings:VerifiableCredential a rdfs:Class ;
+    rdfs:label "Verifiable Credential" ;
+    rdfs:comment "Represents a credential conforming to W3C VC Data Model 2.0." .
+
+settings:ThemePreference a rdfs:Class ;
+    rdfs:label "Theme Preference" ;
+    rdfs:comment "Represents user preferences for themes." .
+
+settings:hasClaim a rdf:Property ;
+    rdfs:domain settings:eCashClaim ;
+    rdfs:range xsd:string ;
+    rdfs:label "has Claim" ;
+    rdfs:comment "Links an eCash claim to its details." .
+
+settings:hasToken a rdf:Property ;
+    rdfs:domain settings:DonationToken ;
+    rdfs:range xsd:string ;
+    rdfs:label "has Token" ;
+    rdfs:comment "Links a donation token to its details." .
+
+settings:hasCredential a rdf:Property ;
+    rdfs:domain settings:VerifiableCredential ;
+    rdfs:range xsd:string ;
+    rdfs:label "has Credential" ;
+    rdfs:comment "Links a verifiable credential to its details." .
+
+settings:hasTheme a rdf:Property ;
+    rdfs:domain settings:ThemePreference ;
+    rdfs:range xsd:string ;
+    rdfs:label "has Theme" ;
+    rdfs:comment "Links a theme preference to its details." .

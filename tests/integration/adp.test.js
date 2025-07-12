@@ -112,4 +112,43 @@ describe('ADP and Call Verification Integration', () => {
       expect(() => mobileManager.notifyCallVerificationFailure()).not.toThrow();
     });
   });
+
+  describe('Edge Cases for WebID Validation and WebRTC Call Verification', () => {
+    it('should handle invalid WebID format gracefully', async () => {
+      const invalidWebID = 'invalid-webid';
+      const cashtabAddress = 'ecash123';
+
+      const isValid = await adpManager.verifyWebID(invalidWebID, cashtabAddress);
+      expect(isValid).toBe(false);
+    });
+
+    it('should handle SolidOS pod unavailability during WebID validation', async () => {
+      const webID = 'https://example.solidpod.com/profile/card#me';
+      const cashtabAddress = 'ecash123';
+
+      jest.spyOn(adpManager, 'verifyWebID').mockImplementation(() => {
+        throw new Error('SolidOS pod unavailable');
+      });
+
+      await expect(adpManager.verifyWebID(webID, cashtabAddress)).rejects.toThrow('SolidOS pod unavailable');
+    });
+
+    it('should handle WebRTC call verification failure due to network issues', async () => {
+      const domain = 'unreachable-domain.com';
+
+      jest.spyOn(mobileManager, 'verifyCall').mockImplementation(() => {
+        throw new Error('Network error during call verification');
+      });
+
+      await expect(mobileManager.verifyCall(domain)).rejects.toThrow('Network error during call verification');
+    });
+
+    it('should handle WebRTC call verification failure due to invalid caller ID', async () => {
+      const invalidCallerID = 'invalid-caller-id';
+
+      const result = await mobileManager.verifyCall(invalidCallerID);
+      expect(result.verified).toBe(false);
+      expect(result.details).toContain('not verified via ADP/WebID');
+    });
+  });
 });

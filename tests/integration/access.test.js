@@ -1,5 +1,7 @@
 const AccessManager = require('../../modules/access');
 const CashtabManager = require('../../modules/cashtab');
+const quadstoreService = require('../../services/quadstore');
+const solidClient = require('@inrupt/solid-client');
 
 // Mock the CashtabManager to control its behavior during tests
 jest.mock('../../modules/cashtab', () => ({
@@ -134,6 +136,39 @@ describe('AccessManager Integration Tests', () => {
 
     test('Fetch obligation cost history', () => {
       expect(() => AccessManager.fetchObligationCostHistory()).not.toThrow();
+    });
+  });
+
+  describe('Obligation Cost Audit Trail Edge Cases', () => {
+    test('should handle Quadstore service unavailable', async () => {
+      quadstoreService.storeObligationCost = jest.fn().mockRejectedValue(new Error('Quadstore unavailable'));
+
+      const walletId = 'test_wallet';
+      const serviceName = 'test_service';
+      const cost = 0.01;
+
+      await expect(AccessManager.trackObligationCost(walletId, serviceName, cost)).rejects.toThrow('Quadstore unavailable');
+    });
+
+    test('should handle SolidOS pod unavailable', async () => {
+      solidClient.saveRDF = jest.fn().mockRejectedValue(new Error('SolidOS pod unavailable'));
+
+      const walletId = 'test_wallet';
+      const serviceName = 'test_service';
+      const cost = 0.01;
+
+      await expect(AccessManager.trackObligationCost(walletId, serviceName, cost)).rejects.toThrow('SolidOS pod unavailable');
+    });
+
+    test('should log obligation cost successfully when services are available', async () => {
+      quadstoreService.storeObligationCost = jest.fn().mockResolvedValue(true);
+      solidClient.saveRDF = jest.fn().mockResolvedValue(true);
+
+      const walletId = 'test_wallet';
+      const serviceName = 'test_service';
+      const cost = 0.01;
+
+      await expect(AccessManager.trackObligationCost(walletId, serviceName, cost)).resolves.not.toThrow();
     });
   });
 });

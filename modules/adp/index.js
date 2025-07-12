@@ -7,6 +7,8 @@
 import { promises as dns } from 'dns';
 import { validateWebID, storeValidationResults } from './webidValidation.js';
 import { quadstore } from '../../services/quadstore.js';
+import { getSessionFromStorage, fetch } from '@inrupt/solid-client-authn-browser';
+import { saveSolidDatasetAt, createSolidDataset, setThing, buildThing, addStringNoLocale } from '@inrupt/solid-client';
 
 const ADP_PREFIX = 'adp:hasEcashAccount=';
 const MAX_RETRIES = 3;
@@ -87,7 +89,13 @@ class AdpManager {
   async verifyWebID(webId, cashtabAddress) {
     try {
       console.log(`Verifying WebID: ${webId} with Cashtab address: ${cashtabAddress}`);
+
       // Validate WebID using Solid Client Authn
+      const session = await getSessionFromStorage();
+      if (!session || !session.info.isLoggedIn) {
+        throw new Error('User is not logged in to Solid Pod');
+      }
+
       const webIDValid = await validateWebID(webId);
       if (!webIDValid) {
         console.error(`WebID validation failed for ${webId}`);
@@ -96,6 +104,18 @@ class AdpManager {
 
       // Store validation results in Quadstore
       await storeValidationResults({ webId, cashtabAddress });
+
+      // Store validation results in SolidOS pod
+      const podUrl = `${session.info.webId}/public/validationResults.ttl`;
+      let dataset = createSolidDataset();
+      const thing = buildThing()
+        .addStringNoLocale('http://schema.org/webId', webId)
+        .addStringNoLocale('http://schema.org/cashtabAddress', cashtabAddress)
+        .build();
+      dataset = setThing(dataset, thing);
+      await saveSolidDatasetAt(podUrl, dataset, { fetch });
+
+      console.log(`Validation results stored in SolidOS pod at ${podUrl}`);
       return true;
     } catch (error) {
       console.error(`Failed to verify WebID ${webId}:`, error);

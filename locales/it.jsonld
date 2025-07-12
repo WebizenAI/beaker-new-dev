@@ -1,0 +1,11 @@
+{
+  "@context": {
+    "@vocab": "http://example.org/vocab#"
+  },
+  "language": "Italian",
+  "translations": {
+    "language_selection": "Selezione della lingua",
+    "select_language": "Seleziona lingua",
+    "language_dropdown": "Menu a tendina della lingua"
+  }
+}

@@ -1,8 +1,10 @@
 const gun = require('gun');
+const { SolidClient } = require('@inrupt/solid-client');
 
 class WorkManager {
   constructor() {
     this.projects = [];
+    this.solidClient = new SolidClient();
     console.log('Work Manager initialized');
   }
 
@@ -85,12 +87,53 @@ class WorkManager {
   }
 
   /**
-   * Enable real-time collaboration for task updates.
-   * @param {object} taskUpdates - The updates of the tasks.
+   * Store project data in SolidOS pod.
+   * @param {string} podUrl - The URL of the SolidOS pod.
+   * @param {object} projectData - The project data to store.
    */
-  enableCollaboration(taskUpdates) {
-    console.log('Enabling real-time collaboration:', taskUpdates);
-    // Example: Use GUN.eco for task updates across global contributors
+  async storeInSolidPod(podUrl, projectData) {
+    try {
+      await this.solidClient.saveFile(`${podUrl}/projects.json`, JSON.stringify(projectData), {
+        contentType: 'application/json',
+      });
+      console.log('Project data stored in SolidOS pod:', podUrl);
+    } catch (error) {
+      console.error('Error storing project data in SolidOS pod:', error);
+    }
+  }
+
+  /**
+   * Retrieve project data from SolidOS pod.
+   * @param {string} podUrl - The URL of the SolidOS pod.
+   * @returns {object|null} - The retrieved project data.
+   */
+  async retrieveFromSolidPod(podUrl) {
+    try {
+      const data = await this.solidClient.readFile(`${podUrl}/projects.json`);
+      console.log('Project data retrieved from SolidOS pod:', data);
+      return JSON.parse(data);
+    } catch (error) {
+      console.error('Error retrieving project data from SolidOS pod:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Enable real-time collaboration for task updates using GUN.
+   * @param {string} projectId - The ID of the project.
+   */
+  enableCollaboration(projectId) {
+    const project = this.projects.find((p) => p.id === projectId);
+    if (!project) {
+      console.error('Project not found for collaboration:', projectId);
+      return;
+    }
+
+    const gun = require('gun');
+    const gunInstance = gun();
+    gunInstance.get(`project_${projectId}`).on((data) => {
+      console.log('Real-time update for project:', data);
+    });
   }
 }
 

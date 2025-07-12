@@ -1,0 +1,632 @@
+{
+  "project": "Webizen v0.0621",
+  "repository": "github.com/WebizenAI/beaker-new-dev",
+  "objective": "Fix errors, add calendar, gitmark, settings, editor modules, integrate SolidOS, semantic tokens (SLP/VCs), OAuth, UI toolkits (pages-ui, work_ui), complete phases 5-11, enhance testing and documentation",
+  "pre_task": {
+    "task": "Read autonomous_build_status.json to identify the next uncompleted task (first task with no status or 'failed'). If none, start with Phase 1, Prompt 1.",
+    "output": "Next task details (phase_id, prompt_id)"
+  },
+  "phases": [
+    {
+      "id": 1,
+      "name": "Fix Core Infrastructure",
+      "prompts": [
+        {
+          "id": 1,
+          "task": "Replace placeholder methods in modules/cashtab/index.js with @cashtab/wallet-lib for multi-sig wallets, eCash addresses, SLP tokens, ECDSA signatures. Add network failure handling.",
+          "output": "modules/cashtab/index.js",
+          "deps": ["Phase 1, Prompt 3"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 1, prompt_id: 1, status: 'completed' or 'failed', output_file: 'modules/cashtab/index.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 1, prompt_id: 1, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 2,
+          "task": "Update services/webizen-api.js for SPHINCS+/Ed25519/AES verification using sphincs, ed25519, CryptoJS. Add logging via services/logging.js.",
+          "output": "services/webizen-api.js",
+          "deps": ["Phase 1, Prompt 4", "Phase 1, Prompt 18"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 1, prompt_id: 2, status: 'completed' or 'failed', output_file: 'services/webizen-api.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 1, prompt_id: 2, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 3,
+          "task": "Update services/quadstore.js to use quadstore, quadstore-comunica for persistent RDF storage, replacing in-memory placeholders. Add SolidOS pod support via @inrupt/solid-client.",
+          "output": "services/quadstore.js",
+          "deps": ["Phase 1, Prompt 8"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 1, prompt_id: 3, status: 'completed' or 'failed', output_file: 'services/quadstore.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 1, prompt_id: 3, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 4,
+          "task": "Update services/ipfs.js to integrate ipfs-http-client for agreements, backups storage. Add SolidOS pod backup support.",
+          "output": "services/ipfs.js",
+          "deps": ["Phase 1, Prompt 8"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 1, prompt_id: 4, status: 'completed' or 'failed', output_file: 'services/ipfs.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 1, prompt_id: 4, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 5,
+          "task": "Replace Unix-style commands in package.json build scripts with rimraf, cpx for cross-platform compatibility. Ensure Electron build supports Node.js 22 LTS with electron-builder, electron-forge.",
+          "output": "package.json",
+          "deps": ["Phase 1, Prompt 15"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 1, prompt_id: 5, status: 'completed' or 'failed', output_file: 'package.json', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 1, prompt_id: 5, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 6,
+          "task": "Enhance tests/integration/scalability.test.js to test Quadstore, SolidOS pods with persistent storage, Webizen API under 100ms network latency.",
+          "output": "tests/integration/scalability.test.js",
+          "deps": ["Phase 1, Prompt 16"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 1, prompt_id: 6, status: 'completed' or 'failed', output_file: 'tests/integration/scalability.test.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 1, prompt_id: 6, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 7,
+          "task": "Update services/webizen-api.js /health endpoint to check Quadstore, IPFS, WebTorrent, SolidOS availability.",
+          "output": "services/webizen-api.js",
+          "deps": ["Phase 1, Prompt 17"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 1, prompt_id: 7, status: 'completed' or 'failed', output_file: 'services/webizen-api.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 1, prompt_id: 7, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 8,
+          "task": "Implement services/logging.js to export logs to Quadstore, IPFS, SolidOS pods using services/quadstore.js, services/ipfs.js, @inrupt/solid-client.",
+          "output": "services/logging.js",
+          "deps": ["Phase 1, Prompt 18"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 1, prompt_id: 8, status: 'completed' or 'failed', output_file: 'services/logging.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 1, prompt_id: 8, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 9,
+          "task": "Write E2E tests in tests/e2e/smoke.test.js for Webizen API workflows (module registration, resource loading, SolidOS pod access).",
+          "output": "tests/e2e/smoke.test.js",
+          "deps": ["Phase 1, Prompt 13"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 1, prompt_id: 9, status: 'completed' or 'failed', output_file: 'tests/e2e/smoke.test.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 1, prompt_id: 9, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 10,
+          "task": "Update docs/post-installation.md with setup for Quadstore, IPFS, SolidOS, cross-platform build tools, Electron Node.js 22 LTS.",
+          "output": "docs/post-installation.md",
+          "deps": ["Phase 1, Prompt 14"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 1, prompt_id: 10, status: 'completed' or 'failed', output_file: 'docs/post-installation.md', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 1, prompt_id: 10, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Fix Access Control",
+      "prompts": [
+        {
+          "id": 1,
+          "task": "Update modules/access/index.js to implement trackObligationCost with Quadstore, SolidOS pod integration.",
+          "output": "modules/access/index.js",
+          "deps": ["Phase 2, Prompt 1", "Phase 1, Prompt 3"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 2, prompt_id: 1, status: 'completed' or 'failed', output_file: 'modules/access/index.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 2, prompt_id: 1, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 2,
+          "task": "Update modules/access/index.js for SPHINCS+ signatures in obligation cost audit trail using sphincs.",
+          "output": "modules/access/index.js",
+          "deps": ["Phase 2, Prompt 7", "Phase 4, Prompt 1"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 2, prompt_id: 2, status: 'completed' or 'failed', output_file: 'modules/access/index.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 2, prompt_id: 2, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 3,
+          "task": "Enhance components/Access.js to fetch/display obligation cost history from Quadstore, SolidOS pods.",
+          "output": "components/Access.js",
+          "deps": ["Phase 2, Prompt 8", "Phase 2, Prompt 1"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 2, prompt_id: 3, status: 'completed' or 'failed', output_file: 'components/Access.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 2, prompt_id: 3, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 4,
+          "task": "Write integration tests in tests/integration/access.test.js for obligation cost tracking, audit trail with edge cases (Quadstore, SolidOS unavailable).",
+          "output": "tests/integration/access.test.js",
+          "deps": ["Phase 2, Prompt 4"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 2, prompt_id: 4, status: 'completed' or 'failed', output_file: 'tests/integration/access.test.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 2, prompt_id: 4, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 5,
+          "task": "Update modules/testsuite/index.js to test obligation cost tracking, audit trail.",
+          "output": "modules/testsuite/index.js",
+          "deps": ["Phase 2, Prompt 5"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 2, prompt_id: 5, status: 'completed' or 'failed', output_file: 'modules/testsuite/index.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 2, prompt_id: 5, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 6,
+          "task": "Update docs/post-installation.md with Cashtab wallet, obligation cost tracking setup.",
+          "output": "docs/post-installation.md",
+          "deps": ["Phase 2, Prompt 6"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 2, prompt_id: 6, status: 'completed' or 'failed', output_file: 'docs/post-installation.md', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 2, prompt_id: 6, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Fix ADP/Call Verification",
+      "prompts": [
+        {
+          "id": 1,
+          "task": "Update modules/adp/index.js to integrate WebID validation with @inrupt/solid-client-authn-browser, store results in Quadstore, SolidOS pods.",
+          "output": "modules/adp/index.js",
+          "deps": ["Phase 3, Prompt 1", "Phase 1, Prompt 3"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 3, prompt_id: 1, status: 'completed' or 'failed', output_file: 'modules/adp/index.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 3, prompt_id: 1, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 2,
+          "task": "Update modules/mobile/index.js to implement WebRTC call verification using react-native-webrtc.",
+          "output": "modules/mobile/index.js",
+          "deps": ["Phase 3, Prompt 2"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 3, prompt_id: 2, status: 'completed' or 'failed', output_file: 'modules/mobile/index.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 3, prompt_id: 2, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 3,
+          "task": "Enhance components/Mobile.js with notifications for call verification failures using React Native Toast API.",
+          "output": "components/Mobile.js",
+          "deps": ["Phase 3, Prompt 8"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 3, prompt_id: 3, status: 'completed' or 'failed', output_file: 'components/Mobile.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 3, prompt_id: 3, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 4,
+          "task": "Write integration tests in tests/integration/adp.test.js for WebID validation, WebRTC call verification with edge cases (invalid WebID, SolidOS pod unavailable).",
+          "output": "tests/integration/adp.test.js",
+          "deps": ["Phase 3, Prompt 5"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 3, prompt_id: 4, status: 'completed' or 'failed', output_file: 'tests/integration/adp.test.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 3, prompt_id: 4, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 5,
+          "task": "Update modules/testsuite/index.js to test WebID validation, WebRTC call verification.",
+          "output": "modules/testsuite/index.js",
+          "deps": ["Phase 3, Prompt 6"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 3, prompt_id: 5, status: 'completed' or 'failed', output_file: 'modules/testsuite/index.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 3, prompt_id: 5, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 6,
+          "task": "Update docs/post-installation.md with ADP/WebID, WebRTC call verification, SolidOS setup.",
+          "output": "docs/post-installation.md",
+          "deps": ["Phase 3, Prompt 6"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 3, prompt_id: 6, status: 'completed' or 'failed', output_file: 'docs/post-installation.md', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 3, prompt_id: 6, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Fix Security",
+      "prompts": [
+        {
+          "id": 1,
+          "task": "Update modules/security/index.js to implement SPHINCS+ (sphincs), ECDSA (@cashtab/wallet-lib), RSA (node-rsa), AES (CryptoJS), Ed25519 (ed25519) for VCs and SLP tokens.",
+          "output": "modules/security/index.js",
+          "deps": ["Phase 4, Prompt 1"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 4, prompt_id: 1, status: 'completed' or 'failed', output_file: 'modules/security/index.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 4, prompt_id: 1, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 2,
+          "task": "Update modules/security/index.js to store rotated keys in Quadstore, SolidOS pods with SPHINCS+ signatures.",
+          "output": "modules/security/index.js",
+          "deps": ["Phase 4, Prompt 8", "Phase 1, Prompt 3"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 4, prompt_id: 2, status: 'completed' or 'failed', output_file: 'modules/security/index.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 4, prompt_id: 2, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 3,
+          "task": "Update modules/security/index.js for audit log storage in Quadstore, SolidOS pods with SPHINCS+ signatures.",
+          "output": "modules/security/index.js",
+          "deps": ["Phase 4, Prompt 9", "Phase 1, Prompt 3"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 4, prompt_id: 3, status: 'completed' or 'failed', output_file: 'modules/security/index.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 4, prompt_id: 3, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 4,
+          "task": "Write integration tests in tests/integration/security.test.js for SPHINCS+, ECDSA, RSA, AES, Ed25519 with edge cases (key rotation failures, SolidOS pod unavailable).",
+          "output": "tests/integration/security.test.js",
+          "deps": ["Phase 4, Prompt 5"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 4, prompt_id: 4, status: 'completed' or 'failed', output_file: 'tests/integration/security.test.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 4, prompt_id: 4, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 5,
+          "task": "Update modules/testsuite/index.js to test key rotation, audit logging.",
+          "output": "modules/testsuite/index.js",
+          "deps": ["Phase 4, Prompt 6"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 4, prompt_id: 5, status: 'completed' or 'failed', output_file: 'modules/testsuite/index.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 4, prompt_id: 5, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 6,
+          "task": "Update docs/post-installation.md with cryptographic libraries, key rotation, SolidOS setup, VC/SLP token issuance.",
+          "output": "docs/post-installation.md",
+          "deps": ["Phase 4, Prompt 7"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 4, prompt_id: 6, status: 'completed' or 'failed', output_file: 'docs/post-installation.md', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 4, prompt_id: 6, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Calendar Module",
+      "prompts": [
+        {
+          "id": 1,
+          "task": "Implement modules/calendar/index.js for event creation, scheduling, reminders, integrated with xaitask for job scheduling, SolidOS pods for event storage, @digitalbazaar/vc for calendar invite VCs.",
+          "output": "modules/calendar/index.js",
+          "deps": ["Phase 1, Prompt 8"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 5, prompt_id: 1, status: 'completed' or 'failed', output_file: 'modules/calendar/index.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 5, prompt_id: 1, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 2,
+          "task": "Create components/Calendar.js with React UI for event management using FullCalendar, ARIA attributes, SolidOS pod integration, pages-ui components.",
+          "output": "components/Calendar.js",
+          "deps": ["Phase 1, Prompt 1", "Phase 9, Prompt 2"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 5, prompt_id: 2, status: 'completed' or 'failed', output_file: 'components/Calendar.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 5, prompt_id: 2, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 3,
+          "task": "Create ontologies/calendar-v1.ttl for event metadata, including VCs for invites, integrating with address book, work management, SolidOS RDF.",
+          "output": "ontologies/calendar-v1.ttl",
+          "deps": ["Phase 1, Prompt 9"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 5, prompt_id: 3, status: 'completed' or 'failed', output_file: 'ontologies/calendar-v1.ttl', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 5, prompt_id: 3, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 4,
+          "task": "Integrate modules/calendar with modules/addressbook for attendees, modules/work for project events, SolidOS pods for storage, VCs for invites.",
+          "output": "modules/calendar/index.js",
+          "deps": ["Phase 8, Prompt 2", "Phase 6, Prompt 1"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 5, prompt_id: 4, status: 'completed' or 'failed', output_file: 'modules/calendar/index.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 5, prompt_id: 4, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 5,
+          "task": "Write integration tests in tests/integration/calendar.test.js for event creation, scheduling, VC invites, integrations with edge cases (conflicting events, SolidOS pod unavailable).",
+          "output": "tests/integration/calendar.test.js",
+          "deps": ["Phase 1, Prompt 13"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 5, prompt_id: 5, status: 'completed' or 'failed', output_file: 'tests/integration/calendar.test.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 5, prompt_id: 5, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 6,
+          "task": "Update modules/testsuite/index.js to include calendar tests, including VC invite issuance.",
+          "output": "modules/testsuite/index.js",
+          "deps": ["Phase 1, Prompt 11"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 5, prompt_id: 6, status: 'completed' or 'failed', output_file: 'modules/testsuite/index.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 5, prompt_id: 6, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 7,
+          "task": "Update components/TestSuite.js to display calendar test results with ARIA attributes.",
+          "output": "components/TestSuite.js",
+          "deps": ["Phase 1, Prompt 12"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 5, prompt_id: 7, status: 'completed' or 'failed', output_file: 'components/TestSuite.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 5, prompt_id: 7, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 8,
+          "task": "Document calendar module setup in docs/post-installation.md, including event creation, VC invites, integrations, SolidOS setup.",
+          "output": "docs/post-installation.md",
+          "deps": ["Phase 1, Prompt 14"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 5, prompt_id: 8, status: 'completed' or 'failed', output_file: 'docs/post-installation.md', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 5, prompt_id: 8, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Complete Remaining Features",
+      "prompts": [
+        {
+          "id": 1,
+          "task": "Implement modules/ai/chatterbox/index.js using Chatterbox for multilingual TTS with emotion control, include Python setup.",
+          "output": ["modules/ai/chatterbox/index.js", "chatterbox_setup.py"],
+          "deps": ["Phase 5, Prompt 1"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 6, prompt_id: 1, status: 'completed' or 'failed', output_file: 'modules/ai/chatterbox/index.js, chatterbox_setup.py', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 6, prompt_id: 1, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 2,
+          "task": "Optimize modules/ai/chatterbox/index.js for low-latency audio with caching.",
+          "output": "modules/ai/chatterbox/index.js",
+          "deps": ["Phase 5, Prompt 7"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 6, prompt_id: 2, status: 'completed' or 'failed', output_file: 'modules/ai/chatterbox/index.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 6, prompt_id: 2, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 3,
+          "task": "Implement modules/work/index.js for project management with Kanban/Gantt, peer reviews, GUN.eco collaboration, SolidOS pod storage, work_ui components.",
+          "output": "modules/work/index.js",
+          "deps": ["Phase 6, Prompt 1", "Phase 6, Prompt 9"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 6, prompt_id: 3, status: 'completed' or 'failed', output_file: 'modules/work/index.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 6, prompt_id: 3, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 4,
+          "task": "Optimize modules/work/gantt.js for large projects (1,000+ tasks) with lazy loading, work_ui components.",
+          "output": "modules/work/gantt.js",
+          "deps": ["Phase 6, Prompt 10"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 6, prompt_id: 4, status: 'completed' or 'failed', output_file: 'modules/work/gantt.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 6, prompt_id: 4, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 5,
+          "task": "Implement modules/hypermedia/index.js with SPARQL-MM for media processing, transcriptions, SolidOS pod storage.",
+          "output": "modules/hypermedia/index.js",
+          "deps": ["Phase 7, Prompt 1"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 6, prompt_id: 5, status: 'completed' or 'failed', output_file: 'modules/hypermedia/index.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 6, prompt_id: 5, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 6,
+          "task": "Optimize modules/hypermedia/index.js for large media datasets with Quadstore, SolidOS pod indexing.",
+          "output": "modules/hypermedia/index.js",
+          "deps": ["Phase 7, Prompt 7"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 6, prompt_id: 6, status: 'completed' or 'failed', output_file: 'modules/hypermedia/index.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 6, prompt_id: 6, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 7,
+          "task": "Implement modules/mobile/index.js for chat, SMS/MMS, call recording, AI assistant with offline support, SolidOS pod storage, pages-ui components.",
+          "output": "modules/mobile/index.js",
+          "deps": ["Phase 8, Prompt 1", "Phase 8, Prompt 9"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 6, prompt_id: 7, status: 'completed' or 'failed', output_file: 'modules/mobile/index.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 6, prompt_id: 7, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 8,
+          "task": "Enhance components/Mobile.js with voice input for AI assistant via Chatterbox, pages-ui components.",
+          "output": "components/Mobile.js",
+          "deps": ["Phase 8, Prompt 10"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 6, prompt_id: 8, status: 'completed' or 'failed', output_file: 'components/Mobile.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 6, prompt_id: 8, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 9,
+          "task": "Implement modules/email/index.js with IMAP-based email, AI-driven responses, rate limiting, SolidOS pod storage, pages-ui components.",
+          "output": "modules/email/index.js",
+          "deps": ["Phase 9, Prompt 1", "Phase 9, Prompt 7"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 6, prompt_id: 9, status: 'completed' or 'failed', output_file: 'modules/email/index.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 6, prompt_id: 9, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 10,
+          "task": "Enhance components/Email.js with AI response preview, pages-ui components.",
+          "output": "components/Email.js",
+          "deps": ["Phase 9, Prompt 8"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 6, prompt_id: 10, status: 'completed' or 'failed', output_file: 'components/Email.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 6, prompt_id: 10, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 11,
+          "task": "Implement modules/library/index.js with SPARQL/vector-based search for large datasets, SolidOS pod storage.",
+          "output": "modules/library/index.js",
+          "deps": ["Phase 10, Prompt 24"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 6, prompt_id: 11, status: 'completed' or 'failed', output_file: 'modules/library/index.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 6, prompt_id: 11, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 12,
+          "task": "Implement modules/appstore/index.js with recommendation engine using Chroma embeddings.",
+          "output": "modules/appstore/index.js",
+          "deps": ["Phase 10, Prompt 25"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 6, prompt_id: 12, status: 'completed' or 'failed', output_file: 'modules/appstore/index.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 6, prompt_id: 12, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 13,
+          "task": "Implement modules/ai/index.js with dynamic model switching, RAG query caching, SolidOS pod storage.",
+          "output": "modules/ai/index.js",
+          "deps": ["Phase 10, Prompt 26"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 6, prompt_id: 13, status: 'completed' or 'failed', output_file: 'modules/ai/index.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 6, prompt_id: 13, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 14,
+          "task": "Implement modules/backups/index.js with incremental backups to IPFS, SolidOS pods.",
+          "output": "modules/backups/index.js",
+          "deps": ["Phase 10, Prompt 27"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 6, prompt_id: 14, status: 'completed' or 'failed', output_file: 'modules/backups/index.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 6, prompt_id: 14, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 15,
+          "task": "Enhance components/Timeline.js with interactive zoom, filter controls, SolidOS pod integration, pages-ui components.",
+          "output": "components/Timeline.js",
+          "deps": ["Phase 10, Prompt 28"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 6, prompt_id: 15, status: 'completed' or 'failed', output_file: 'components/Timeline.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 6, prompt_id: 15, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 16,
+          "task": "Implement remaining modules (bookmarks, media, solid, apps, translator, resources, parental) per Phase 10 prompts, with SolidOS pod storage, pages-ui components.",
+          "output": "modules/*.js",
+          "deps": ["Phase 10, Prompts 1-21"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 6, prompt_id: 16, status: 'completed' or 'failed', output_file: 'modules/*.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 6, prompt_id: 16, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Testing and Documentation",
+      "prompts": [
+        {
+          "id": 1,
+          "task": "Write unit tests for new modules (calendar, chatterbox, work, hypermedia, mobile, email, library, appstore, ai, backups, timeline, gitmark, settings, editor) with edge cases, including VCs, SLP tokens, OAuth.",
+          "output": "tests/unit/*.test.js",
+          "deps": ["Phase 11, Prompt 1", "Phase 8, Prompt 1", "Phase 9, Prompt 1", "Phase 10, Prompt 1"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 7, prompt_id: 1, status: 'completed' or 'failed', output_file: 'tests/unit/*.test.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 7, prompt_id: 1, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 2,
+          "task": "Write integration tests for module interactions (calendar-work, AI-email, gitmark-cashtab, settings-cashtab, editor-gitmark) with performance metrics, VCs, SLP tokens, OAuth.",
+          "output": "tests/integration/*.test.js",
+          "deps": ["Phase 11, Prompt 2", "Phase 8, Prompt 4", "Phase 9, Prompt 4", "Phase 10, Prompt 4"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 7, prompt_id: 2, status: 'completed' or 'failed', output_file: 'tests/integration/*.test.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 7, prompt_id: 2, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 3,
+          "task": "Write E2E tests for workflows (calendar event creation, hypermedia transcription, email AI response, gitmark commit marking, settings eCash claims, editor code editing, VC/SLP issuance).",
+          "output": "tests/e2e/*.test.js",
+          "deps": ["Phase 11, Prompt 3", "Phase 8, Prompt 1", "Phase 9, Prompt 1", "Phase 10, Prompt 1"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 7, prompt_id: 3, status: 'completed' or 'failed', output_file: 'tests/e2e/*.test.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 7, prompt_id: 3, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 4,
+          "task": "Test accessibility with NVDA, VoiceOver, JAWS for all components, including Calendar.js, Gitmark.js, Settings.js, Editor.js. Document in docs/accessibility-report.md.",
+          "output": "docs/accessibility-report.md",
+          "deps": ["Phase 11, Prompt 5", "Phase 8, Prompt 2", "Phase 9, Prompt 2", "Phase 10, Prompt 2"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 7, prompt_id: 4, status: 'completed' or 'failed', output_file: 'docs/accessibility-report.md', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 7, prompt_id: 4, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 5,
+          "task": "Create docs/api.md documenting Webizen API endpoints, module extension guidelines, including gitmark, settings, editor endpoints, OAuth, VC/SLP token APIs.",
+          "output": "docs/api.md",
+          "deps": ["Phase 11, Prompt 7", "Phase 8, Prompt 1", "Phase 9, Prompt 1", "Phase 10, Prompt 1"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 7, prompt_id: 5, status: 'completed' or 'failed', output_file: 'docs/api.md', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 7, prompt_id: 5, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 6,
+          "task": "Create docs/troubleshooting.md with guides for Chatterbox GPU setup, mobile app crashes, calendar issues, gitmark setup, settings configuration, editor diagnostics, OAuth issues.",
+          "output": "docs/troubleshooting.md",
+          "deps": ["Phase 11, Prompt 11", "Phase 8, Prompt 8", "Phase 9, Prompt 8", "Phase 10, Prompt 8"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 7, prompt_id: 6, status: 'completed' or 'failed', output_file: 'docs/troubleshooting.md', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 7, prompt_id: 6, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 7,
+          "task": "Create .github/workflows/ci.yml for automated testing, deployment of WebExtension, Electron, mobile app, gitmark, settings, editor, with Electron Forge, electron-builder, OAuth tests.",
+          "output": ".github/workflows/ci.yml",
+          "deps": ["Phase 11, Prompt 12", "Phase 8, Prompt 1", "Phase 9, Prompt 1", "Phase 10, Prompt 1"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 7, prompt_id: 7, status: 'completed' or 'failed', output_file: '.github/workflows/ci.yml', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 7, prompt_id: 7, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 8,
+          "task": "Update docs/post-installation.md with complete setup for all features, including calendar, gitmark, settings, editor modules, SolidOS, OAuth, VC/SLP token issuance.",
+          "output": "docs/post-installation.md",
+          "deps": ["Phase 11, Prompt 6", "Phase 8, Prompt 8", "Phase 9, Prompt 8", "Phase 10, Prompt 8"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 7, prompt_id: 8, status: 'completed' or 'failed', output_file: 'docs/post-installation.md', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 7, prompt_id: 8, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Gitmark Module",
+      "prompts": [
+        {
+          "id": 1,
+          "task": "Implement modules/gitmark/index.js to support git mark command for Git, GitHub, GitLab, Bitcoin, Bitcoin-ABC (eCash) using @octokit/rest, gitlab, @cashtab/wallet-lib. Add OAuth 2.0 for GitHub/GitLab using @inrupt/solid-client-authn-browser for WebID. Store commit marks in Quadstore, SolidOS pods. Integrate with Webizen API.",
+          "output": "modules/gitmark/index.js",
+          "deps": ["Phase 1, Prompt 1", "Phase 1, Prompt 3"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 8, prompt_id: 1, status: 'completed' or 'failed', output_file: 'modules/gitmark/index.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 8, prompt_id: 1, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 2,
+          "task": "Create components/Gitmark.js with React UI for managing git marks, using ARIA attributes, integrated with GitHub, GitLab, SolidOS pod APIs, pages-ui components.",
+          "output": "components/Gitmark.js",
+          "deps": ["Phase 1, Prompt 1", "Phase 9, Prompt 2"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 8, prompt_id: 2, status: 'completed' or 'failed', output_file: 'components/Gitmark.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 8, prompt_id: 2, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 3,
+          "task": "Create ontologies/gitmark-v1.ttl for gitmark metadata, including commit hash, blockchain tx, platform (GitHub, GitLab), SolidOS RDF, integrated with calendar, work modules.",
+          "output": "ontologies/gitmark-v1.ttl",
+          "deps": ["Phase 1, Prompt 9", "Phase 5, Prompt 3"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 8, prompt_id: 3, status: 'completed' or 'failed', output_file: 'ontologies/gitmark-v1.ttl', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 8, prompt_id: 3, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 4,
+          "task": "Integrate modules/gitmark with modules/cashtab for eCash transactions, modules/work for project tracking, SolidOS pods for storage, using GitHub/GitLab APIs with OAuth.",
+          "output": "modules/gitmark/index.js",
+          "deps": ["Phase 1, Prompt 1", "Phase 6, Prompt 3"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 8, prompt_id: 4, status: 'completed' or 'failed', output_file: 'modules/gitmark/index.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 8, prompt_id: 4, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 5,
+          "task": "Write integration tests in tests/integration/gitmark.test.js for git mark functionality across Git, GitHub, GitLab, Bitcoin, eCash with edge cases (invalid tx, API rate limits, SolidOS pod unavailable, OAuth failures).",
+          "output": "tests/integration/gitmark.test.js",
+          "deps": ["Phase 1, Prompt 13"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 8, prompt_id: 5, status: 'completed' or 'failed', output_file: 'tests/integration/gitmark.test.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 8, prompt_id: 5, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 6,
+          "task": "Update modules/testsuite/index.js to include gitmark tests for commit marking, blockchain integration, OAuth authentication.",
+          "output": "modules/testsuite/index.js",
+          "deps": ["Phase 1, Prompt 11"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 8, prompt_id: 6, status: 'completed' or 'failed', output_file: 'modules/testsuite/index.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 8, prompt_id: 6, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 7,
+          "task": "Update components/TestSuite.js to display gitmark test results with ARIA attributes.",
+          "output": "components/TestSuite.js",
+          "deps": ["Phase 1, Prompt 12"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 8, prompt_id: 7, status: 'completed' or 'failed', output_file: 'components/TestSuite.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 8, prompt_id: 7, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 8,
+          "task": "Document gitmark module setup in docs/post-installation.md, including Git, GitHub, GitLab, Bitcoin, eCash, SolidOS, OAuth integration.",
+          "output": "docs/post-installation.md",
+          "deps": ["Phase 1, Prompt 14"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 8, prompt_id: 8, status: 'completed' or 'failed', output_file: 'docs/post-installation.md', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 8, prompt_id: 8, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Settings Module",
+      "prompts": [
+        {
+          "id": 1,
+          "task": "Implement modules/settings/index.js to manage eCash contributor claims using @cashtab/wallet-lib ECDSA signatures, issue SLP tokens for agreements/donations, VCs per W3C VC Data Model 2.0 using @digitalbazaar/vc for relationships/invites. Store in Quadstore, SolidOS pods. Integrate with Webizen API.",
+          "output": "modules/settings/index.js",
+          "deps": ["Phase 1, Prompt 1", "Phase 1, Prompt 3"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 9, prompt_id: 1, status: 'completed' or 'failed', output_file: 'modules/settings/index.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 9, prompt_id: 1, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 2,
+          "task": "Create components/Settings.js with React UI for eCash claims, donation token/VC management, theme selection (light/dark, pages-ui, work_ui) using Tailwind CSS, ARIA attributes, SolidOS pod integration.",
+          "output": "components/Settings.js",
+          "deps": ["Phase 1, Prompt 1"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 9, prompt_id: 2, status: 'completed' or 'failed', output_file: 'components/Settings.js', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 9, prompt_id: 2, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 3,
+          "task": "Create ontologies/settings-v1.ttl for settings metadata, including eCash claims, donation tokens, VCs, theme preferences, SolidOS RDF.",
+          "output": "ontologies/settings-v1.ttl",
+          "deps": ["Phase 1, Prompt 9"],
+          "write_status": "Write status to autonomous_build_status.json: {phase_id: 9, prompt_id: 3, status: 'completed' or 'failed', output_file: 'ontologies/settings-v1.ttl', timestamp: '2025-07-12T22:10:00+10:00'}",
+          "log_errors": "If error, log to Autobot_errors.json: {phase_id: 9, prompt_id: 3, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-12T22:10:00+10:00'}"
+        },
+        {
+          "id": 4,
+          "task": "Integrate modules/settings with modules/cashtab for eCash transactions, modules/work for project tracking, SolidOS pods for storage

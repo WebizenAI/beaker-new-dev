@@ -87,4 +87,23 @@ describe('Security Integration Tests', () => {
     const details = { detail1: 'value1' };
     expect(() => securityManager.logAuditTrail(action, details)).not.toThrow();
   });
+
+  test('should handle key rotation failure gracefully', async () => {
+    const keys = { key1: 'value1', key2: 'value2' };
+    jest.spyOn(securityManager, 'storeRotatedKeys').mockImplementation(() => {
+      throw new Error('Key rotation failed');
+    });
+
+    await expect(securityManager.storeRotatedKeys(keys)).rejects.toThrow('Key rotation failed');
+  });
+
+  test('should handle SolidOS pod unavailability during audit logging', async () => {
+    const action = 'testAction';
+    const details = { detail1: 'value1' };
+    jest.spyOn(securityManager, 'logAuditTrail').mockImplementation(() => {
+      throw new Error('SolidOS pod unavailable');
+    });
+
+    await expect(securityManager.logAuditTrail(action, details)).rejects.toThrow('SolidOS pod unavailable');
+  });
 });

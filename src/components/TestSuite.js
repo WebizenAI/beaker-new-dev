@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import i18next from 'i18next';
 // In a real Electron/Node.js environment, this import would likely be handled
 // via a preload script to expose necessary backend modules to the frontend.
 import testSuite from '../modules/testsuite';
@@ -29,7 +30,74 @@ const TestSuite = () => {
 
   function displayCalendarTestResults(results) {
     console.log('Displaying calendar test results:', results);
-    // Example: Render test results with ARIA attributes
+
+    return (
+      <div id="calendar-test-results" aria-live="polite" aria-atomic="true">
+        <h2 className="text-xl font-bold mb-4">{i18next.t('Calendar Test Results')}</h2>
+        <ul role="list" className="space-y-2">
+          {results.map((result, index) => (
+            <li
+              key={index}
+              role="listitem"
+              className={`p-3 rounded border ${
+                result.status === 'passed' ? 'border-green-400 bg-green-50' : 'border-red-400 bg-red-50'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <span className="font-semibold">
+                  <span aria-hidden="true" className={result.status === 'passed' ? 'text-green-600 mr-2' : 'text-red-600 mr-2'}>
+                    {result.status === 'passed' ? '✔' : '✖'}
+                  </span>
+                  {i18next.t(result.testName)}
+                </span>
+                <span className="text-sm text-gray-500">{result.duration}</span>
+              </div>
+              {result.status === 'failed' && result.error && (
+                <div role="alert" className="mt-2 p-2 bg-red-100 text-red-800 rounded text-sm">
+                  <strong>{i18next.t('Error')}:</strong> {i18next.t(result.error)}
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
+
+  function displayGitmarkTestResults(results) {
+    console.log('Displaying gitmark test results:', results);
+
+    return (
+      <div id="gitmark-test-results" aria-live="polite" aria-atomic="true">
+        <h2 className="text-xl font-bold mb-4">{i18next.t('Gitmark Test Results')}</h2>
+        <ul role="list" className="space-y-2">
+          {results.map((result, index) => (
+            <li
+              key={index}
+              role="listitem"
+              className={`p-3 rounded border ${
+                result.status === 'passed' ? 'border-green-400 bg-green-50' : 'border-red-400 bg-red-50'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <span className="font-semibold">
+                  <span aria-hidden="true" className={result.status === 'passed' ? 'text-green-600 mr-2' : 'text-red-600 mr-2'}>
+                    {result.status === 'passed' ? '✔' : '✖'}
+                  </span>
+                  {i18next.t(result.testName)}
+                </span>
+                <span className="text-sm text-gray-500">{result.duration}</span>
+              </div>
+              {result.status === 'failed' && result.error && (
+                <div role="alert" className="mt-2 p-2 bg-red-100 text-red-800 rounded text-sm">
+                  <strong>{i18next.t('Error')}:</strong> {i18next.t(result.error)}
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
   }
 
   return (
@@ -79,4 +147,4 @@ const TestSuite = () => {
 };
 
 export default TestSuite;
-export { displayCalendarTestResults };
+export { displayCalendarTestResults, displayGitmarkTestResults };

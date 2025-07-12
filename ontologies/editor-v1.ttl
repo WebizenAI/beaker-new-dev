@@ -1,0 +1,38 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix solid: <http://www.inrupt.com/solid/> .
+@prefix editor: <http://www.webizen.org/editor#> .
+
+editor:Editor a rdfs:Class ;
+    rdfs:label "Editor Metadata" ;
+    rdfs:comment "Metadata for the editor module, including file types, diagnostics, and SolidOS RDF." .
+
+editor:FileType a rdfs:Class ;
+    rdfs:label "File Type" ;
+    rdfs:comment "Supported file types in the editor." .
+
+editor:Diagnostics a rdfs:Class ;
+    rdfs:label "Diagnostics" ;
+    rdfs:comment "Diagnostics information for code editing." .
+
+editor:SolidOSStorage a rdfs:Class ;
+    rdfs:label "SolidOS Storage" ;
+    rdfs:comment "Links editor content to SolidOS RDF storage." .
+
+editor:hasFileType a rdf:Property ;
+    rdfs:domain editor:Editor ;
+    rdfs:range editor:FileType ;
+    rdfs:label "Has File Type" ;
+    rdfs:comment "Links an editor instance to its supported file types." .
+
+editor:hasDiagnostics a rdf:Property ;
+    rdfs:domain editor:Editor ;
+    rdfs:range editor:Diagnostics ;
+    rdfs:label "Has Diagnostics" ;
+    rdfs:comment "Links an editor instance to its diagnostics information." .
+
+editor:hasSolidOSStorage a rdf:Property ;
+    rdfs:domain editor:Editor ;
+    rdfs:range editor:SolidOSStorage ;
+    rdfs:label "Has SolidOS Storage" ;
+    rdfs:comment "Links an editor instance to its SolidOS storage." .

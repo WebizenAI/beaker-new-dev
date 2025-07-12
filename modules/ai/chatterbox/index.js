@@ -1,8 +1,15 @@
-const { exec } = require('child_process');
+const { exec, spawn } = require('child_process');
 const torchaudio = require('torchaudio');
+
+const cache = new Map();
 
 class ChatterboxManager {
   constructor() {
+    this.supportedLanguages = [
+      'Italian', 'Dutch', 'German', 'Spanish', 'French', 'Mandarin',
+      'Hindi', 'Japanese', 'Korean', 'Bengali', 'Tamil', 'Telugu',
+      'Portuguese', 'Quechua'
+    ];
     console.log('Chatterbox Manager initialized');
   }
 
@@ -45,14 +52,49 @@ class ChatterboxManager {
   }
 
   /**
-   * Generate TTS with emotion control using torchaudio.
+   * Generate TTS audio for the given text and language.
    * @param {string} text - The text to convert to speech.
-   * @param {string} language - The language for the TTS.
-   * @param {string} emotion - The emotion to convey in the speech.
+   * @param {string} language - The language for TTS.
+   * @param {string} emotion - The emotion to apply (e.g., 'happy', 'sad').
+   * @returns {Promise<string>} - Path to the generated audio file.
    */
-  generateTTS(text, language, emotion) {
-    console.log('Generating TTS:', { text, language, emotion });
-    // Example: Generate multilingual TTS with emotion control
+  async generateTTS(text, language, emotion) {
+    const cacheKey = `${text}_${language}_${emotion}`;
+    if (cache.has(cacheKey)) {
+      console.log('Cache hit:', cacheKey);
+      return cache.get(cacheKey);
+    }
+
+    const audioPath = await new Promise((resolve, reject) => {
+      const pythonProcess = spawn('python', ['chatterbox_tts.py', text, language, emotion]);
+
+      pythonProcess.stdout.on('data', (data) => {
+        console.log(`Output: ${data}`);
+        resolve(data.toString().trim());
+      });
+
+      pythonProcess.stderr.on('data', (data) => {
+        console.error(`Error: ${data}`);
+        reject(data.toString().trim());
+      });
+
+      pythonProcess.on('close', (code) => {
+        if (code !== 0) {
+          reject(`Process exited with code ${code}`);
+        }
+      });
+    });
+
+    cache.set(cacheKey, audioPath);
+    return audioPath;
+  }
+
+  /**
+   * Clear the cache.
+   */
+  clearCache() {
+    cache.clear();
+    console.log('Cache cleared');
   }
 
   /**

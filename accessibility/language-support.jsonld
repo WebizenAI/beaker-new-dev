@@ -1,0 +1,24 @@
+{
+  "@context": {
+    "@vocab": "http://schema.org/",
+    "language": "http://schema.org/Language",
+    "accessibilityFeature": "http://schema.org/accessibilityFeature"
+  },
+  "languages": [
+    {
+      "name": "English",
+      "code": "en",
+      "accessibilityFeature": "Text-to-Speech"
+    },
+    {
+      "name": "Spanish",
+      "code": "es",
+      "accessibilityFeature": "Text-to-Speech"
+    },
+    {
+      "name": "French",
+      "code": "fr",
+      "accessibilityFeature": "Text-to-Speech"
+    }
+  ]
+}

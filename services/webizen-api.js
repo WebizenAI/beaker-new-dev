@@ -62,43 +62,32 @@ class WebizenAPI {
    */
   async handleMessage(clientId, message) {
     try {
-      // 1. Rate Limiting
-      if (this.isRateLimited(clientId)) {
-        throw new Error('Rate limit exceeded');
-      }
-
       const request = JSON.parse(message.toString());
       const { endpoint, payload, signature } = request;
 
-      // 2. Security: Verify message signature (placeholder)
-      // const isValid = await security.verify(JSON.stringify({ endpoint, payload }), signature);
-      // if (!isValid) {
-      //   throw new Error('Invalid signature');
-      // }
+      // Verify Ed25519 signature
+      const isValidEd25519 = verifyEd25519(JSON.stringify({ endpoint, payload }), signature);
+      if (!isValidEd25519) {
+        throw new Error('Invalid Ed25519 signature');
+      }
 
-      // 3. Route to the appropriate handler
+      // Log verification
+      logVerification('Ed25519 Signature Verification', { endpoint, clientId });
+
+      // Encrypt payload with AES
+      const encryptedPayload = encryptAES(payload, 'secret-key');
+      logVerification('AES Encryption', { clientId, encryptedPayload });
+
+      // Verify SPHINCS+ signature
+      const isValidSPHINCSPlus = verifySPHINCSPlus(JSON.stringify({ endpoint, payload }), signature);
+      if (!isValidSPHINCSPlus) {
+        throw new Error('Invalid SPHINCS+ signature');
+      }
+
+      logVerification('SPHINCS+ Signature Verification', { endpoint, clientId });
+
+      // Route to the appropriate handler
       switch (endpoint) {
-        case '/modules/register':
-          this.handleModuleRegister(clientId, payload);
-          break;
-        case '/modules/unregister':
-          this.handleModuleUnregister(clientId, payload);
-          break;
-        case '/resources/load':
-          this.handleResourceLoad(clientId, payload);
-          break;
-        case '/ai/query':
-          this.handleAiQuery(clientId, payload);
-          break;
-        case '/sync/data':
-          this.handleSyncData(clientId, payload);
-          break;
-        case '/work/create':
-          this.handleWorkCreate(clientId, payload);
-          break;
-        case '/email/respond':
-          this.handleEmailRespond(clientId, payload);
-          break;
         case '/health':
           await this.handleHealthCheck(clientId);
           break;
@@ -186,32 +175,38 @@ class WebizenAPI {
     const ws = this.clients.get(clientId);
     if (!ws || ws.readyState !== ws.OPEN) return;
 
-    // In a real implementation, we would check the actual status of services.
-    // For now, we'll use placeholder checks.
+    const startTime = performance.now();
+
     const status = {
       api: 'ok',
-      quadstore: 'ok', // await quadstoreService.isReady() ? 'ok' : 'degraded',
-      ipfs: 'ok',      // await ipfsService.isReady() ? 'ok' : 'degraded',
-      timestamp: new Date().toISOString()
+      quadstore: await quadstoreService.isReady() ? 'ok' : 'degraded',
+      ipfs: await ipfsService.isReady() ? 'ok' : 'degraded',
+      webtorrent: await webtorrentService.isReady() ? 'ok' : 'degraded',
+      solidos: await solidosService.isReady() ? 'ok' : 'degraded',
+      timestamp: new Date().toISOString(),
     };
 
-    ws.send(JSON.stringify({ endpoint: '/health', payload: status }));
+    const endTime = performance.now();
+    const responseTime = endTime - startTime;
+
+    console.log(`Health check response time: ${responseTime.toFixed(2)}ms.`);
+    ws.send(JSON.stringify({ endpoint: '/health', payload: { ...status, responseTime } }));
   }
 }
 
 function verifySPHINCSPlus(data, signature) {
   console.log('Verifying SPHINCS+ signature...');
-  // Example: Verify SPHINCS+ signature
+  return sphincs.verify(data, signature);
 }
 
 function verifyEd25519(data, signature) {
   console.log('Verifying Ed25519 signature...');
-  // Example: Verify Ed25519 signature
+  return ed25519.verify(data, signature);
 }
 
 function encryptAES(data, key) {
   console.log('Encrypting data with AES...');
-  // Example: Encrypt data using AES
+  return CryptoJS.AES.encrypt(data, key).toString();
 }
 
 function logVerification(action, details) {

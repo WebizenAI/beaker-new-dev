@@ -1,5 +1,10 @@
+const SolidClient = require('@inrupt/solid-client');
+const SPARQLClient = require('sparql-http-client');
 const sparql = require('sparql');
 const vectordb = require('vectordb');
+
+const solidClient = new SolidClient();
+const sparqlClient = new SPARQLClient({ endpointUrl: 'https://example.com/sparql' });
 
 class LibraryManager {
   constructor() {
@@ -66,6 +71,40 @@ class LibraryManager {
   performVectorSearch(queryDetails) {
     console.log('Performing vector-based search:', queryDetails);
     // Example: Implement vector-based search for resources
+  }
+
+  /**
+   * Search with SPARQL.
+   * @param {string} query - The SPARQL query string.
+   * @returns {Promise<object[]>} - A promise that resolves to the query results.
+   */
+  async searchWithSPARQL(query) {
+    try {
+      const results = await sparqlClient.query.select(query);
+
+      console.log('SPARQL query results:', results);
+      return results;
+    } catch (error) {
+      console.error('Error executing SPARQL query:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Store a dataset in SolidOS pod.
+   * @param {object} dataset - The dataset to store.
+   * @returns {Promise<object>} - A promise that resolves to the stored dataset.
+   */
+  async storeDatasetInSolid(dataset) {
+    try {
+      await solidClient.saveToPod(dataset, 'library/datasets');
+
+      console.log('Dataset stored successfully in SolidOS pod:', dataset);
+      return dataset;
+    } catch (error) {
+      console.error('Error storing dataset in SolidOS pod:', error);
+      throw error;
+    }
   }
 }
 

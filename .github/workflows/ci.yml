@@ -1,7 +1,10 @@
-name: CI
+name: CI Pipeline
 
 on:
   push:
+    branches:
+      - master
+  pull_request:
     branches:
       - master
 
@@ -11,12 +14,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Install dependencies
         run: npm install
@@ -24,11 +27,49 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - name: Build WebExtension
-        run: npm run build:webextension
-
       - name: Build Electron app
         run: npm run build:electron
 
-      - name: Build mobile app
-        run: npm run build:mobile
+      - name: Deploy WebExtension
+        run: npm run deploy:webextension
+
+      - name: Deploy Mobile App
+        run: npm run deploy:mobile
+
+      - name: Run OAuth tests
+        run: npm run test:oauth
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts
+          path: dist/
+
+  deploy:
+    name: Deploy Applications
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Deploy Gitmark
+        run: npm run deploy:gitmark
+
+      - name: Deploy Settings
+        run: npm run deploy:settings
+
+      - name: Deploy Editor
+        run: npm run deploy:editor
+
+      - name: Deploy i18n
+        run: npm run deploy:i18n

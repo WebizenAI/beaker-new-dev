@@ -1,5 +1,6 @@
 @prefix : <http://example.org/calendar#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix vc: <https://www.w3.org/2018/credentials/v1#> .
 
 :Event a rdfs:Class ;
   rdfs:label "Event" ;
@@ -30,3 +31,21 @@
   rdfs:comment "Attendee of the event." ;
   rdfs:domain :Event ;
   rdfs:range :Attendee .
+
+:hasInvite a rdf:Property ;
+  rdfs:label "Invite" ;
+  rdfs:comment "Verifiable Credential for event invites." ;
+  rdfs:domain :Event ;
+  rdfs:range vc:VerifiableCredential .
+
+:hasAddressBookEntry a rdf:Property ;
+  rdfs:label "Address Book Entry" ;
+  rdfs:comment "Link to address book for attendees." ;
+  rdfs:domain :Attendee ;
+  rdfs:range xsd:string .
+
+:hasWorkProject a rdf:Property ;
+  rdfs:label "Work Project" ;
+  rdfs:comment "Link to work management project." ;
+  rdfs:domain :Event ;
+  rdfs:range xsd:string .

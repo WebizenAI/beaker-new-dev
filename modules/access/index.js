@@ -7,11 +7,9 @@
 
 // In a real implementation, these would be required from the services directory.
 import { cashtabManager } from '../cashtab/index.js';
-// import { quadstoreService } from '../../services/quadstore.js';
-// const securityService = require('../../services/crypto'); // For SPHINCS+
-// const { DataFactory } = require('n3');
-// const { namedNode, literal, quad } = DataFactory;
-// const configService = require('../../services/config');
+import { quadstoreService } from '../../services/quadstore.js';
+import { solidClient } from '@inrupt/solid-client';
+import { sphincs } from '../../services/crypto';
 
 const MAX_PAYMENT_RETRIES = 3;
 const RETRY_DELAY_MS = 1000;
@@ -138,7 +136,24 @@ export class AccessManager {
       currency: 'XEC',
       timestamp: new Date().toISOString(),
     };
-    await this.logObligationCost(costDetails);
+
+    try {
+      // Log to Quadstore
+      await quadstoreService.storeObligationCost(costDetails);
+
+      // Log to SolidOS pod
+      const podUrl = `https://solidpod.example.org/${walletId}/obligationCosts.ttl`;
+      const rdfData = `@prefix dc: <http://purl.org/dc/terms/> .\n` +
+                      `@prefix obligation: <http://webizen.org/v1/obligation#> .\n` +
+                      `obligation:${serviceName} dc:date "${costDetails.timestamp}" ;\n` +
+                      `obligation:cost "${costDetails.cost}" ;\n` +
+                      `obligation:currency "${costDetails.currency}" .`;
+      await solidClient.saveRDF(podUrl, rdfData);
+
+      console.log('Obligation cost tracked successfully.');
+    } catch (error) {
+      console.error('Failed to track obligation cost:', error);
+    }
   }
 
   /**
@@ -149,16 +164,25 @@ export class AccessManager {
     console.log('Logging obligation cost to audit trail...');
     try {
       const dataToSign = JSON.stringify(costDetails);
-      const signature = `sphincs_signature_for_${dataToSign}`;
+
+      // Generate SPHINCS+ signature
+      const signature = await sphincs.sign(dataToSign);
 
       const auditId = `urn:audit:${Date.now()}`;
       const obligationNs = 'http://webizen.org/v1/obligation#';
       const securityNs = 'http://webizen.org/v1/security#';
       const dcNs = 'http://purl.org/dc/terms/';
 
-      const triples = [];
+      const triples = [
+        { subject: auditId, predicate: `${dcNs}date`, object: costDetails.timestamp },
+        { subject: auditId, predicate: `${obligationNs}cost`, object: costDetails.cost },
+        { subject: auditId, predicate: `${obligationNs}currency`, object: costDetails.currency },
+        { subject: auditId, predicate: `${securityNs}signature`, object: signature },
+      ];
 
-      console.log(`Obligation cost for ${costDetails.serviceName} logged to Quadstore with signature: ${signature}`);
+      await quadstoreService.storeTriples(triples);
+
+      console.log(`Obligation cost for ${costDetails.serviceName} logged to Quadstore with SPHINCS+ signature: ${signature}`);
     } catch (error) {
       console.error('Failed to log obligation cost to audit trail:', error);
     }

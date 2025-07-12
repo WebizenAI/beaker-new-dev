@@ -62,6 +62,18 @@ describe('Scalability Tests', () => {
       const data = { key: 'value' };
       expect(() => quadstore.storeRDFData(data)).not.toThrow();
     });
+
+    test('Quadstore persistent storage with SolidOS pods', async () => {
+      const data = {
+        subject: quadstore.dataFactory.namedNode('ex:subject'),
+        predicate: quadstore.dataFactory.namedNode('ex:predicate'),
+        object: quadstore.dataFactory.literal('object value'),
+      };
+
+      const containerUrl = 'https://example.solidpod/container';
+      await expect(quadstore.storeRDFData(data)).resolves.not.toThrow();
+      await expect(quadstore.storeInSolidPod(containerUrl, data)).resolves.not.toThrow();
+    });
   });
 
   describe('Webizen API Scalability', () => {
@@ -117,6 +129,22 @@ describe('Scalability Tests', () => {
     test('Webizen API under 100ms latency', () => {
       const mockData = { action: 'test' };
       expect(() => webizenAPI.logVerification('testAction', mockData)).not.toThrow();
+    });
+
+    test('Webizen API scalability under 100ms latency', async () => {
+      const ws = new WebSocket(`ws://localhost:${PORT}`);
+      const startTime = performance.now();
+
+      ws.on('open', () => {
+        ws.send(JSON.stringify({ endpoint: '/health', payload: {} }));
+        ws.close();
+      });
+
+      const endTime = performance.now();
+      const duration = endTime - startTime;
+
+      console.log(`Webizen API: Health check completed in ${duration.toFixed(2)}ms.`);
+      expect(duration).toBeLessThan(100); // Ensure latency is under 100ms
     });
   });
 });

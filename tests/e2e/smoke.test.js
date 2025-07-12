@@ -10,4 +10,11 @@ describe('Webizen API E2E Tests', () => {
     const mockResource = { id: 'resource1', type: 'testType' };
     expect(() => webizenAPI.loadResource(mockResource)).not.toThrow();
   });
+
+  test('SolidOS pod access workflow', async () => {
+    const mockPodUrl = 'https://example.solidpod/container';
+    const mockData = { key: 'value' };
+
+    await expect(webizenAPI.accessSolidPod(mockPodUrl, mockData)).resolves.not.toThrow();
+  });
 });

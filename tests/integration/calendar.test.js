@@ -21,4 +21,28 @@ describe('Calendar Module Integration Tests', () => {
     const projectEvents = ['event1', 'event2'];
     expect(() => calendarModule.integrateWithWorkManagement(projectEvents)).not.toThrow();
   });
+
+  test('Issue VC invite for event', async () => {
+    const eventDetails = { title: 'VC Event', date: '2025-07-20' };
+    const recipientWebId = 'https://example.com/profile/card#me';
+    const vcInvite = await calendarModule.issueCalendarInviteVC(eventDetails, recipientWebId);
+    expect(vcInvite).toHaveProperty('credentialSubject');
+    expect(vcInvite.credentialSubject.eventDetails.title).toBe('VC Event');
+  });
+
+  test('Handle conflicting events', () => {
+    const event1 = { title: 'Event 1', date: '2025-07-15T10:00:00' };
+    const event2 = { title: 'Event 2', date: '2025-07-15T10:00:00' };
+    calendarModule.createEvent(event1);
+    expect(() => calendarModule.createEvent(event2)).toThrow('Conflicting event detected');
+  });
+
+  test('Handle SolidOS pod unavailability', async () => {
+    jest.spyOn(calendarModule, 'createEvent').mockImplementation(() => {
+      throw new Error('SolidOS pod unavailable');
+    });
+
+    const eventDetails = { title: 'Unavailable Event', date: '2025-07-25' };
+    await expect(calendarModule.createEvent(eventDetails)).rejects.toThrow('SolidOS pod unavailable');
+  });
 });

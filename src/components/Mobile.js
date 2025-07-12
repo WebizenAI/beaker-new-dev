@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { mobileManager } from '../../modules/mobile';
+import Toast from 'react-native-toast-message';
+import i18next from 'i18next';
+import Chatterbox from 'chatterbox';
+
+const aiAssistant = new Chatterbox();
 
 const Mobile = () => {
   const [incomingCall, setIncomingCall] = useState(null);
@@ -34,6 +39,12 @@ const Mobile = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (verificationStatus && !verificationStatus.verified) {
+      notifyCallVerificationFailure(incomingCall?.callerId);
+    }
+  }, [verificationStatus]);
+
   const getStatusColor = () => {
     if (!verificationStatus) return 'text-gray-500';
     if (verificationStatus.details === 'Verifying...') return 'text-blue-500';
@@ -63,14 +74,37 @@ const Mobile = () => {
     });
   };
 
-  const notifyCallVerificationFailure = () => {
-    console.log('Call verification failed. Displaying notification...');
-    // Example: Use React Native Toast API for notifications
+  const notifyCallVerificationFailure = (callerId) => {
+    const message = i18next.t('callVerificationFailure', {
+      callerId,
+    });
+    Toast.show({
+      type: 'error',
+      text1: i18next.t('notificationTitle'),
+      text2: message,
+      position: 'bottom',
+    });
   };
 
-  const enableVoiceInputForAI = () => {
-    console.log('Enabling voice input for AI assistant...');
-    // Example: Integrate voice input using Chatterbox
+  const handleVoiceInputForAI = async (voiceInput) => {
+    try {
+      const response = await aiAssistant.processInput(voiceInput);
+      console.log('AI Assistant response:', response);
+      Toast.show({
+        type: 'success',
+        text1: i18next.t('aiAssistantResponseTitle'),
+        text2: response,
+        position: 'bottom',
+      });
+    } catch (error) {
+      console.error('Error processing voice input for AI assistant:', error);
+      Toast.show({
+        type: 'error',
+        text1: i18next.t('aiAssistantErrorTitle'),
+        text2: i18next.t('aiAssistantErrorMessage'),
+        position: 'bottom',
+      });
+    }
   };
 
   return (
@@ -182,6 +216,17 @@ const Mobile = () => {
               className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
             >
               Verify Call
+            </button>
+          </div>
+
+          {/* Voice Input for AI Assistant Section */}
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold mb-2">Voice Input for AI Assistant</h2>
+            <button
+              onClick={() => handleVoiceInputForAI('Example voice input')}
+              className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600"
+            >
+              Use Voice Input
             </button>
           </div>
         </div>
