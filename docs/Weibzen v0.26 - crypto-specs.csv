@@ -1,0 +1,14 @@
+Category,Algorithm,Specification,Library,Use Case,Rationale
+Core Primitives,SPHINCS+,SHAKE256-robust,sphincs 3.0.4,High-Value & Long-Term Data,Post-quantum security for data with a long lifecycle.
+Core Primitives,ECDSA,secp256k1,@cashtab/wallet-lib,Blockchain & Financial Data,Compatibility with eCash and other blockchain systems.
+Core Primitives,EdDSA,Ed25519,ed25519 1.7.3,Transient & High-Volume Data,High-performance and misuse-resistant for low-latency needs.
+Core Primitives,AES,AES-256,CryptoJS 4.1.1,Data-at-Rest Confidentiality,Standard for symmetric encryption of sensitive data.
+Future Primitives,Falcon,N/A,N/A,Next-Gen Compact Signatures,Evaluation for use cases requiring small signature sizes.
+Module Policy,SPHINCS+,N/A,N/A,"Signing Agreements, Backups, VCs, Audit Logs",Ensuring long-term integrity and non-repudiation.
+Module Policy,ECDSA,N/A,N/A,"Signing eCash Transactions, SLP Tokens, WebIDs",Maintaining compatibility with external financial and identity ecosystems.
+Module Policy,EdDSA,N/A,N/A,"Signing Chat Messages, Media Metadata",Providing lightweight and fast integrity checks for ephemeral data.
+Advanced Topics,JWT,Ed25519 & ECDSA,N/A,Authentication & Session Management,Secure and efficient transmission of identity and permissions.
+Advanced Topics,Zero-Knowledge Proofs,Zk-SNARKs/Zk-STARKs,N/A,Privacy-Enhancing Technologies,Future integration for anonymous credentials and private transactions.
+Advanced Topics,COSE,CBOR-based,N/A,Compact Data Formats,Efficient signing and encryption for constrained environments.
+Advanced Topics,WASM,Rust/C++ to WASM,N/A,Performance Optimization,Near-native speed for computationally intensive crypto operations.
+Advanced Topics,Nostr,Ed25519,N/A,Decentralized Social Networking,Interoperability with the broader decentralized ecosystem.

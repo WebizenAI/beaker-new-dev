@@ -1,0 +1,194 @@
+{
+  "project": "Webizen v0.26 Security Specification",
+  "version": "0.2",
+  "repository": "github.com/WebizenAI/beaker-new-dev",
+  "timestamp": "2025-07-13T03:33:00+10:00",
+  "objective": "Define security parameters for signing IPFS CIDs in Webizen v0.26, using SPHINCS+ for high-value/long-term data, ECDSA for blockchain-related data, Ed25519 for transient data, and AES for specific scenarios. Implement, optimize, test, and document the approach to ensure post-quantum security, performance, and scalability in a decentralized P2P environment.",
+  "global_rules": {
+    "write_status": "Append status to autonomous_build_status.json: {phase_id, prompt_id, status: 'completed' or 'failed', output_file, timestamp: '2025-07-13T03:33:00+10:00'}",
+    "log_errors": "If error, append to Autobot_errors.json: {phase_id, prompt_id, issue: 'Error description', llm_details: 'Model name, version', date: '2025-07-13T03:33:00+10:00'}"
+  },
+  "pre_task": {
+    "task": "Read autonomous_build_status.json to identify the next uncompleted task (first task with no status or 'failed'). If none, start with Phase 1, Prompt 1.",
+    "output": "Next task details (phase_id, prompt_id)",
+    "suggested_improvements": "Validate autonomous_build_status.json schema before reading; create JSON schema file in config/."
+  },
+  "phases": [
+    {
+      "id": 1,
+      "name": "Cryptographic Implementation",
+      "prompts": [
+        {
+          "id": 1,
+          "task": "Update services/crypto.js to implement SPHINCS+ (sphincs 3.0.4, SHAKE256-robust) for signing IPFS CIDs for high-value/long-term data (agreements, backups, VCs, audit logs). Include ECDSA (@cashtab/wallet-lib) for blockchain-related CIDs, Ed25519 (ed25519 1.7.3) for transient data, and AES (CryptoJS 4.1.1) for pre-shared key scenarios. Add caching for SPHINCS+ signature verification.",
+          "output": "services/crypto.js",
+          "deps": ["Phase 2, Prompt 1"],
+          "suggested_improvements": "Implement batch signing for SPHINCS+ to reduce computational overhead."
+        },
+        {
+          "id": 2,
+          "task": "Update services/ipfs.js to integrate with services/crypto.js for signing IPFS CIDs using SPHINCS+, ECDSA, or Ed25519 based on data type (high-value, blockchain, transient). Store signed CIDs in SolidOS pods via @inrupt/solid-client 2.0.0 with RDF metadata.",
+          "output": "services/ipfs.js",
+          "deps": ["Phase 1, Prompt 1", "Phase 3, Prompt 1"],
+          "suggested_improvements": "Add compression for SPHINCS+ signatures to reduce storage."
+        },
+        {
+          "id": 3,
+          "task": "Create ontologies/security-v1.ttl to define RDF metadata for signed IPFS CIDs, including signature type (SPHINCS+, ECDSA, Ed25519), CID, signer WebID, and tamper-detection fields.",
+          "output": "ontologies/security-v1.ttl",
+          "deps": [],
+          "suggested_improvements": "Add metadata for signature expiration policies."
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Signing Policy and Integration",
+      "prompts": [
+        {
+          "id": 1,
+          "task": "Implement modules/security/index.js with a hybrid signing policy: SPHINCS+ for high-value/long-term CIDs (agreements, backups, VCs, audit logs), ECDSA for blockchain-related CIDs (eCash transactions, SLP tokens), Ed25519 for transient CIDs (chat, media metadata). Configure via config/webizen-config-v0.26.json.",
+          "output": "modules/security/index.js",
+          "deps": ["Phase 1, Prompt 1"],
+          "suggested_improvements": "Add dynamic policy switching based on resource constraints."
+        },
+        {
+          "id": 2,
+          "task": "Integrate CID signing into modules/agreements/index.js to sign IPFS CIDs for RDF-based agreements with SPHINCS+, storing signatures in SolidOS pods with SHACL validation (ontologies/agreements-v1.shacl.ttl).",
+          "output": "modules/agreements/index.js",
+          "deps": ["Phase 1, Prompt 2", "Phase 1, Prompt 3"],
+          "suggested_improvements": "Add agreement-specific signature caching."
+        },
+        {
+          "id": 3,
+          "task": "Integrate CID signing into modules/backups/index.js to sign IPFS CIDs for encrypted backups with SPHINCS+ or AES, storing signatures in SolidOS pods or Quadstore.",
+          "output": "modules/backups/index.js",
+          "deps": ["Phase 1, Prompt 2", "Phase 1, Prompt 3"],
+          "suggested_improvements": "Implement incremental backup signing."
+        },
+        {
+          "id": 4,
+          "task": "Integrate CID signing into modules/community/index.js to sign IPFS CIDs for contribution metadata (translations, code, issues) with SPHINCS+ or ECDSA, storing signatures in SolidOS pods.",
+          "output": "modules/community/index.js",
+          "deps": ["Phase 1, Prompt 2", "Phase 1, Prompt 3"],
+          "suggested_improvements": "Add batch signing for high-volume contributions."
+        },
+        {
+          "id": 5,
+          "task": "Integrate CID signing into modules/hypermedia/index.js to sign IPFS CIDs for media metadata with Ed25519 for transient data, storing signatures in SolidOS pods.",
+          "output": "modules/hypermedia/index.js",
+          "deps": ["Phase 1, Prompt 2", "Phase 1, Prompt 3"],
+          "suggested_improvements": "Add real-time signature verification for streaming media."
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Webizen API Integration",
+      "prompts": [
+        {
+          "id": 1,
+          "task": "Update services/webizen-api.js to add a /security/sign-cid endpoint for signing IPFS CIDs with SPHINCS+, ECDSA, or Ed25519 based on config/webizen-config-v0.26.json. Secure with SPHINCS+ or Ed25519 authentication over WebSockets/Tailscale (port 8080).",
+          "output": "services/webizen-api.js",
+          "deps": ["Phase 1, Prompt 1"],
+          "suggested_improvements": "Add rate limiting for CID signing requests."
+        },
+        {
+          "id": 2,
+          "task": "Update services/webizen-api.js to add a /security/verify-cid endpoint for verifying signed IPFS CIDs, using cached SPHINCS+ verification results where possible.",
+          "output": "services/webizen-api.js",
+          "deps": ["Phase 1, Prompt 1"],
+          "suggested_improvements": "Add verification failure alerts in multiple languages."
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Testing",
+      "prompts": [
+        {
+          "id": 1,
+          "task": "Write unit tests in tests/unit/security.test.js for SPHINCS+, ECDSA, Ed25519, and AES CID signing/verification in services/crypto.js, including edge cases (invalid keys, corrupted signatures).",
+          "output": "tests/unit/security.test.js",
+          "deps": ["Phase 1, Prompt 1"],
+          "suggested_improvements": "Add unit tests for signature caching."
+        },
+        {
+          "id": 2,
+          "task": "Write integration tests in tests/integration/security.test.js for CID signing/verification across modules (agreements, backups, community, hypermedia) with edge cases (SolidOS pod unavailable, high-volume signing, network failures).",
+          "output": "tests/integration/security.test.js",
+          "deps": ["Phase 2, Prompts 2-5"],
+          "suggested_improvements": "Add stress tests for 10,000+ signed CIDs."
+        },
+        {
+          "id": 3,
+          "task": "Update modules/testsuite/index.js to include CID signing/verification tests for SPHINCS+, ECDSA, Ed25519, with performance benchmarks and multilingual error reporting.",
+          "output": "modules/testsuite/index.js",
+          "deps": ["Phase 4, Prompts 1-2"],
+          "suggested_improvements": "Add automated test report export in RDF/JSON."
+        },
+        {
+          "id": 4,
+          "task": "Update components/TestSuite.js to display CID signing/verification test results with ARIA attributes, i18next for multilingual support (15 languages, including Arabic RTL), and visual summaries.",
+          "output": "components/TestSuite.js",
+          "deps": ["Phase 4, Prompt 3"],
+          "suggested_improvements": "Add real-time test result streaming."
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Optimization",
+      "prompts": [
+        {
+          "id": 1,
+          "task": "Optimize services/crypto.js for SPHINCS+ CID signing by implementing batch signing for multiple CIDs and caching verification results in Quadstore.",
+          "output": "services/crypto.js",
+          "deps": ["Phase 1, Prompt 1"],
+          "suggested_improvements": "Add signature aggregation for storage efficiency."
+        },
+        {
+          "id": 2,
+          "task": "Optimize services/ipfs.js for storing SPHINCS+-signed CIDs in SolidOS pods with compression (e.g., gzip) to reduce signature size.",
+          "output": "services/ipfs.js",
+          "deps": ["Phase 1, Prompt 2"],
+          "suggested_improvements": "Implement IPFS pinning for critical signed CIDs."
+        },
+        {
+          "id": 3,
+          "task": "Benchmark SPHINCS+, ECDSA, Ed25519 CID signing/verification performance in tests/integration/security.test.js for high-volume scenarios (10,000+ CIDs), including mobile devices (6GB RAM, 2GHz CPU).",
+          "output": "tests/integration/security.test.js",
+          "deps": ["Phase 4, Prompt 2"],
+          "suggested_improvements": "Add performance metrics dashboard."
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Documentation",
+      "prompts": [
+        {
+          "id": 1,
+          "task": "Create docs/security.md documenting CID signing with SPHINCS+, ECDSA, Ed25519, and AES, including use cases (high-value, blockchain, transient), performance trade-offs, and setup in services/crypto.js, services/ipfs.js. Translate into 15 languages (including Arabic RTL).",
+          "output": "docs/security.md",
+          "deps": ["Phase 1, Prompts 1-3", "Phase 2, Prompts 1-5"],
+          "suggested_improvements": "Add security best practices for key management."
+        },
+        {
+          "id": 2,
+          "task": "Update docs/post-installation.md with setup instructions for CID signing (SPHINCS+, ECDSA, Ed25519) in services/ipfs.js, including key generation and multilingual examples (15 languages, including Arabic RTL).",
+          "output": "docs/post-installation.md",
+          "deps": ["Phase 1, Prompts 1-2"],
+          "suggested_improvements": "Include setup video tutorials in supported languages."
+        },
+        {
+          "id": 3,
+          "task": "Update docs/api.md with documentation for /security/sign-cid and /security/verify-cid endpoints, including parameters, authentication (SPHINCS+, Ed25519), and multilingual examples (15 languages, including Arabic RTL).",
+          "output": "docs/api.md",
+          "deps": ["Phase 3, Prompts 1-2"],
+          "suggested_improvements": "Add API usage examples with code snippets."
+        }
+      ]
+    }
+  ]
+}

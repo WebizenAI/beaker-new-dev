@@ -1,0 +1,113 @@
+{
+  "project": "Webizen v0.26 Cryptography Specification",
+  "version": "2.0",
+  "timestamp": "2025-07-13T16:28:00+10:00",
+  "objective": "To define and govern the cryptographic standards, policies, and implementations across the Webizen v0.26 ecosystem, ensuring a multi-layered, future-proof security posture.",
+  "cryptographicPrimitives": [
+    {
+      "name": "SPHINCS+",
+      "type": "Post-Quantum Digital Signature",
+      "library": "sphincs",
+      "version": "3.0.4",
+      "configuration": "SHAKE256-robust",
+      "useCaseCategory": "High-Value & Long-Term Data",
+      "rationale": "Provides robust post-quantum security for data requiring long-term integrity."
+    },
+    {
+      "name": "ECDSA",
+      "type": "Elliptic Curve Digital Signature",
+      "library": "@cashtab/wallet-lib",
+      "configuration": "secp256k1",
+      "useCaseCategory": "Blockchain & Financial Data",
+      "rationale": "Ensures compatibility with existing blockchain protocols like eCash."
+    },
+    {
+      "name": "EdDSA",
+      "type": "Modern Digital Signature",
+      "library": "ed25519",
+      "version": "1.7.3",
+      "useCaseCategory": "Transient & High-Volume Data",
+      "rationale": "High-performance and misuse-resistant, ideal for low-latency applications."
+    },
+    {
+      "name": "AES",
+      "type": "Symmetric Key Encryption",
+      "library": "CryptoJS",
+      "version": "4.1.1",
+      "useCaseCategory": "Data-at-Rest Confidentiality",
+      "rationale": "A well-established standard for ensuring the confidentiality of sensitive information."
+    },
+    {
+      "name": "Falcon",
+      "type": "Post-Quantum Digital Signature",
+      "status": "For future evaluation",
+      "useCaseCategory": "Next-Gen Compact Signatures",
+      "rationale": "A lattice-based PQC signature scheme known for its highly compact signature sizes."
+    }
+  ],
+  "policyMatrix": [
+    {
+      "module": "Agreements",
+      "dataType": "RDF-based agreements and contracts",
+      "algorithm": "SPHINCS+",
+      "dependencies": ["services/ipfs.js", "services/crypto.js"]
+    },
+    {
+      "module": "Backups",
+      "dataType": "Encrypted backup archives",
+      "algorithm": ["SPHINCS+", "AES"],
+      "dependencies": ["services/ipfs.js", "services/crypto.js"]
+    },
+    {
+      "module": "Community",
+      "dataType": "Contribution metadata",
+      "algorithm": ["SPHINCS+", "ECDSA"],
+      "dependencies": ["services/ipfs.js", "services/crypto.js"]
+    },
+    {
+      "module": "Hypermedia",
+      "dataType": "Metadata for media files",
+      "algorithm": "EdDSA",
+      "dependencies": ["services/ipfs.js", "services/crypto.js"]
+    },
+    {
+      "module": "Blockchain",
+      "dataType": "eCash transactions & SLP tokens",
+      "algorithm": "ECDSA",
+      "dependencies": ["modules/security/index.js"]
+    },
+    {
+      "module": "Webizen API",
+      "dataType": "API Endpoint Security",
+      "algorithm": ["SPHINCS+", "Ed25519"],
+      "dependencies": ["modules/security/index.js"]
+    }
+  ],
+  "advancedTopics": {
+    "jwt": {
+      "status": "Implemented",
+      "description": "Standard for authentication and authorization tokens.",
+      "signingAlgorithms": ["Ed25519", "ECDSA"]
+    },
+    "zeroKnowledgeProofs": {
+      "status": "Future Integration",
+      "description": "For privacy-enhancing features like anonymous credentials and private transactions."
+    },
+    "cose": {
+      "status": "Planned",
+      "description": "For creating compact, binary-encoded signed or encrypted messages, especially in constrained environments."
+    },
+    "fipsCompliance": {
+      "status": "Considered in Design",
+      "description": "Cryptographic modules are designed with FIPS 140-3 principles in mind."
+    },
+    "wasm": {
+      "status": "Planned",
+      "description": "To accelerate computationally intensive cryptographic operations by compiling libraries (e.g., for SPHINCS+) to WebAssembly."
+    },
+    "nostr": {
+      "status": "Supported",
+      "description": "Webizen can act as a Nostr client, publishing Ed25519-signed events to the Nostr network."
+    }
+  }
+}
